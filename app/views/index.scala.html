@@ -1,0 +1,41 @@
+@(title: String, year: Integer)
+
+@main(title, year) {
+    
+    <div class="row">
+		<div class="span10 offset1">
+			<div class="hero-unit">
+				<h2>@title</h2>
+				<p>
+					Vous êtes sur le point d'installer les projets présents sur ce 
+					CD DeViNT @year et nous vous en remercions.
+				</p>
+				<p>
+					Les logiciels de ce CD sont conçus et développés par les élèves 
+					ingénieurs du département Sciences Informatiques de l'école 
+					Polytech Nice Sophia dans le cadre de leurs projets de troisième 
+					année.
+				</p>
+				<p>
+					Ces projets s'adressent en premier lieu aux élèves déficients 
+					visuels du Collège ou de l'enseignement primaire, aidés de leur 
+					entourage famille, enseignants et médecins, associations.
+				</p>
+				<p>
+					Le CD fonctionne a priori sous Windows, XP, Seven (32 bits et 
+					64 bits), et pour certains projets sous Linux, ou sous Mac OS X.
+				</p>
+				<p>
+					Le CD est distribué gratuitement sur demande, dans le cadre d'une 
+					utilisation non commerciale et non militaire.
+				</p>
+				<p>
+					Cliquez sur le bouton 'Suivant' pour continuer l'installation.
+					Fermez votre navigateur pour quitter l'installation.
+				</p>
+				<a href="@routes.Application.licence" class="btn btn-large btn-primary"/>Suivant</a>
+			</div>
+		</div>
+	</div>
+    
+}

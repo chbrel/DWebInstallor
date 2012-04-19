@@ -1,0 +1,23 @@
+@(title: String, year: Integer, defaultInstallFolder: String)
+
+@main(title, year) {
+    
+    <div class="row">
+		<div class="span10 offset1">
+			<div class="hero-unit">
+				<h2>@title</h2>
+				<form method="POST" action="@routes.Application.gamechoices("year")">
+					<div class="control-group">
+						<label class="control-label" for="installfolder">Chemin vers le dossier d'installation</label>
+						<div class="controls">
+							<input type="text" class="input-large" name="installfolder" value="@defaultInstallFolder" />
+						</div>
+					</div>
+					
+					<input type="submit" class="btn btn-large btn-primary" value="Suivant" />
+				</form>
+			</div>
+		</div>
+	</div>
+    
+}

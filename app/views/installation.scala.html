@@ -1,0 +1,23 @@
+@(title: String, year: Integer, comet: play.libs.Comet, test : String)
+
+@main(title, year) {
+			<script type="text/javascript">
+			  var cometMessage = function(event) {
+			    $('#installationLog').append('Received event: ' + event + '<br/>');
+			    
+			  }
+			</script>
+			
+			<iframe src=""></iframe>
+						
+			<div class="row">
+				<div class="span10 offset1">
+					<div class="hero-unit">
+						<h2>@title</h2>
+						<div id="installationLog">
+						@Html(test)
+						</div>
+					</div>
+				</div>
+			</div>
+}

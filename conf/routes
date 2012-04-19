@@ -1,0 +1,23 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           controllers.Application.index()
+
+# Licence page
+GET     /licence                    controllers.Application.licence()
+
+# Config page
+GET     /config                    controllers.Application.config()
+
+# Game Choices page
+POST	/gamechoices				controllers.Application.gamechoices(sortedMethod = "year")
+GET		/gamechoices				controllers.Application.gamechoices(sortedMethod = "year")
+GET		/gamechoicesbycategory		controllers.Application.gamechoices(sortedMethod = "category")
+
+# Installation page
+POST	/installation				controllers.Application.installation()
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)

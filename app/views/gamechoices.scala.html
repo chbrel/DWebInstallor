@@ -1,0 +1,47 @@
+@(title: String, year: Integer, sortedMethod: String, gamesHtml: String)
+
+@main(title, year) {
+			<script type="text/javascript">
+				function selectAll(className) {
+					if($('#' + className + '_all').attr('checked')) {
+						$('.' + className).attr('checked', false);
+						$('.' + className).attr('checked', true);
+					} else {
+						$('.' + className).attr('checked', true);
+						$('.' + className).attr('checked', false);
+					}
+				}
+			</script>
+			<div class="row">
+				<div class="span10 offset1">
+					<div class="hero-unit">
+						<h2>@title</h2>
+						Trier les projets par
+						<div class="btn-group">
+						  @if(sortedMethod.equals("year")) {
+						  	<a class="btn btn-info active">année</a>
+						  	<a class="btn" href="@routes.Application.gamechoices("category")">catégorie</a>
+						  }
+						  
+						  @if(sortedMethod.equals("category")) {
+						  	<a class="btn" href="@routes.Application.gamechoices("year")">année</a>
+						  	<a class="btn btn-info active">catégorie</a>
+						  }
+						</div>
+						<form method="POST" action="@routes.Application.installation">
+							<ul class="nav nav-pills nav-stacked">
+								<li class="active">
+									<a>
+										<label class="checkbox">
+											<input type="checkbox" id="game_all" onchange="javascript:selectAll('game')" />
+										</label>&nbsp;&nbsp;Sélectionner tous les projets
+									</a>
+								</li>
+								@Html(gamesHtml)
+							</ul>
+							<input type="submit" class="btn btn-large btn-primary" value="Suivant" />
+						</form>
+					</div>
+				</div>
+			</div>
+}
