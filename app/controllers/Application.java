@@ -188,28 +188,32 @@ public class Application extends Controller {
   
   public static Result installation() {
 	  int year = getYear();
+		  
+	  RequestBody body = request().body();
+	  Map<String,String[]> args = body.asFormUrlEncoded();
 	  
-	  Comet comet = new Comet("parent.cometMessage") {
-		    public void onConnected() {
+	  String test = "";
+	  
+	  if(args != null && args.keySet().contains("games")) {  
+		  String[] selectedGames = args.get("games");
+		  for(String sg : selectedGames) {
+			  test += sg + "<br /><br />"; 
+		  }
+	  }
+	  
+	return ok(installation.render("Installation en cours", year, test));
+  }
+  
+  public static Result comet() {
+      Comet comet = new Comet("parent.cometMessage") {
+          public void onConnected() {
 		      sendMessage("kiki");
 		      sendMessage("foo");
 		      sendMessage("bar");
 		      close();
 		    }
-		  };
-		  
-		  RequestBody body = request().body();
-		  Map<String,String[]> args = body.asFormUrlEncoded();
-		  
-		  String test = "";
-		  
-		  if(args != null && args.keySet().contains("games")) {  
-			  String[] selectedGames = args.get("games");
-			  for(String sg : selectedGames) {
-				  test += sg + "<br /><br />"; 
-			  }
-		  }
-		  
-		return ok(installation.render("Installation en cours", year, comet, test));
+      };
+      
+      return ok(comet);
   }
 }

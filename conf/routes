@@ -19,5 +19,9 @@ GET		/gamechoicesbycategory		controllers.Application.gamechoices(sortedMethod = 
 # Installation page
 POST	/installation				controllers.Application.installation()
 
+# Comet test
+GET	    /comet                      controllers.Application.comet()
+GET     /comet2                      controllers.Application.comet2()
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
