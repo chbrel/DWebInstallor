@@ -90,8 +90,10 @@ public class Application extends Controller {
 	 return ok(licence.render("Les projets DeViNT sont sous licence !", year));
   }
   
-  public static Result config() {
+  public static Result config(String uninstall) {
 	  int year = getYear();
+	  
+	  session("uninstall", uninstall.equals("uninstall")+"");
 	  
 	  String defaultInstallFolder = "";
 	  
@@ -105,8 +107,10 @@ public class Application extends Controller {
 		} else if(OSValidator.isMac()) {
 			defaultInstallFolder = File.separator + "Applications" + File.separator + "DeViNT" + File.separator;
 		}
-	  
-	  return ok(config.render("Configuration de l'installation", year, defaultInstallFolder));
+	  if (session("uninstall") != null && session("uninstall").equals("true"))
+		return ok(config.render("Configuration de la désinstallation", year, defaultInstallFolder));
+	  else
+		return ok(config.render("Configuration de l'installation", year, defaultInstallFolder));
   }
   
   public static Result gamechoices(String sortedMethod) {
@@ -121,14 +125,22 @@ public class Application extends Controller {
 	  
 	  ArrayList<Game> games = Game.getAll(GAMES_PATH);
 	  
+	  if(session("uninstall") != null && session("uninstall").equals("true"))
+		games = Game.getAll(session("installfolder"));
+	  
+	  if (session("uninstall") != null && session("uninstall").equals("true") && games == null)
+		return ok(end.render("Il n'y a rien à supprimer!", year, true));
+	  
 	  Collections.sort(games, new YearGameSortComparator());
 	  String htmlGameList = getGamesYearRepresentation(games);
 	  
 	  if(sortedMethod.equals("category")) {
 		  htmlGameList = getGamesCategoryRepresentation(getSortedbyCategory(games));
 	  }
-	  
-	  return ok(gamechoices.render("Choix des projets à installer", year, sortedMethod, htmlGameList));
+	  if (session("uninstall") != null && session("uninstall").equals("true"))
+		return ok(gamechoices.render("Choix des projets à déinstaller", year, sortedMethod, htmlGameList));
+	  else
+	    return ok(gamechoices.render("Choix des projets à installer", year, sortedMethod, htmlGameList));
   }
   
   public static TreeMap<GameCategory, ArrayList<Game>> getSortedbyCategory(ArrayList<Game> games) {
@@ -212,20 +224,30 @@ public class Application extends Controller {
 	  }
 	  
 	  session("selectedGames", selectedGamesString);
-	  
-	  return ok(installation.render("Installation: copie des fichiers", year));
+	  if (session("uninstall") != null && session("uninstall").equals("true"))
+		return ok(installation.render("Désinstallation: effacement des fichiers", year));
+	  else
+		return ok(installation.render("Installation: copie des fichiers", year));
   }
   
   public static Result comet() {
 	  final String installationFolder = session("installfolder");
 	  final String[] selectedGames = session("selectedGames").split("_SG_");
-      Comet comet = new Comet("parent.cometMessage") {
-          public void onConnected() {
-        	  launchCopy(this, installationFolder, selectedGames);
-		    }
-      };
-      
-      return ok(comet);
+	  if (session("uninstall") != null && session("uninstall").equals("true")) {
+		  Comet comet = new Comet("parent.cometMessage") {
+			  public void onConnected() {	  
+					launchUninstall(this, installationFolder, selectedGames);
+				}
+		  };
+		  return ok(comet);
+	  } else {
+		  Comet comet = new Comet("parent.cometMessage") {
+			  public void onConnected() {	  
+					launchCopy(this, installationFolder, selectedGames);
+				}
+		  };
+		  return ok(comet);
+	  }
   }
   
   public static void launchCopy(Comet comet, String installationFolder, String[] selectedGames) {  
@@ -251,11 +273,11 @@ public class Application extends Controller {
 				installDir.mkdirs();
 			}
 			
-			File idfile = new File(this.getInstallationFolder()+File.separator+"installationid");
+			File idfile = new File(installationFolder+File.separator+"installationid");
 			if (!idfile.exists()) {
 				try {
 					FileWriter fw = new FileWriter(idfile);
-					fw.write(""+this.getInstallationFolder().hashCode());
+					fw.write(""+installationFolder.hashCode());
 					fw.flush();
 					fw.close();
 				} catch (IOException e) {
@@ -550,7 +572,10 @@ public class Application extends Controller {
 		
 	}
 	
-public void launchUninstall(Comet comet, String installationFolder, String[] selectedGames) {
+public static void launchUninstall(Comet comet, String installationFolder, String[] selectedGames) {
+	
+	long startCopyTime = System.currentTimeMillis();
+	
 	File idfile = new File(installationFolder+File.separator+"installationid");
 	if (idfile.exists() && idfile.isFile()) {
 		try {
@@ -562,30 +587,30 @@ public void launchUninstall(Comet comet, String installationFolder, String[] sel
 				fileNumber+=cbuf[i];
 			}
 			try {
-				if (Integer.parseInt(fileNumber) != this.getInstallationFolder().hashCode()) {
-					comet.sendMessage("Il n'existe pas de projets déjà installés dans "+this.getInstallationFolder());
+				if (Integer.parseInt(fileNumber) != installationFolder.hashCode()) {
+					comet.sendMessage("Il n'existe pas de projets déjà installés dans "+installationFolder);
 					return;
 				}
 			} catch (NumberFormatException e) {
-				comet.sendMessage("Il n'existe pas de projets déjà installés dans "+this.getInstallationFolder());
+				comet.sendMessage("Il n'existe pas de projets déjà installés dans "+installationFolder);
 				return;
 			}
 		} catch (FileNotFoundException e) {
-			comet.sendMessage("Il n'existe pas de projets déjà installés dans "+this.getInstallationFolder());
+			comet.sendMessage("Il n'existe pas de projets déjà installés dans "+installationFolder);
 			e.printStackTrace();
 			return;
 		} catch (IOException e) {
-			comet.sendMessage("Il n'existe pas de projets déjà installés dans "+this.getInstallationFolder());
+			comet.sendMessage("Il n'existe pas de projets déjà installés dans "+installationFolder);
 			e.printStackTrace();
 			return;
 		}
 		
 	} else {
-		comet.sendMessage("Il n'existe pas de projets déjà installés dans "+this.getInstallationFolder());
+		comet.sendMessage("Il n'existe pas de projets déjà installés dans "+installationFolder);
 		return;
 	}
 	
-	ArrayList<Game> installedGames = Game.getAll(this.getInstallationFolder());
+	ArrayList<Game> installedGames = Game.getAll(installationFolder);
 	
 	if (installedGames == null) {
 		return;
@@ -593,7 +618,7 @@ public void launchUninstall(Comet comet, String installationFolder, String[] sel
 	
 	ArrayList<Game> toUninstall = new ArrayList<Game>();
 	
-	for(Game g : games) {
+	for(Game g : installedGames) {
 		for(String sg : selectedGames) {
 			if(sg.equals(g.getGameRep().toString())) {
 				toUninstall.add(g);
@@ -605,42 +630,78 @@ public void launchUninstall(Comet comet, String installationFolder, String[] sel
 	
 	for (Game game : installedGames) {
 		if ((toUninstall.contains(game)) && game != null) {
-			comet.sendMessage("Désinstallation de "+game.getTitle());
+			comet.sendMessage("info: Désinstallation de "+game.getTitle());
 			FileUtils.rmDir(game.getGameRep());
 		}
 	}
 	
-	comet.sendMessage("Suppression des aides générées précédemment.");
-	FileUtils.rmDir(new File(this.getInstallationFolder()+File.separator+"Aide"));
+	comet.sendMessage("info: Suppression des aides générées précédemment.");
+	FileUtils.rmDir(new File(installationFolder+File.separator+"Aide"));
 	
 	if (uninstallAll) {
-		comet.sendMessage("Destruction du répertoire \"lib\" et de ses sous répertoires.");
-		FileUtils.rmDir(new File(this.getInstallationFolder()+File.separator+"lib"));
-		comet.sendMessage("Destruction du répertoire \"jre\" et de ses sous répertoires.");
-		FileUtils.rmDir(new File(this.getInstallationFolder()+File.separator+"jre"));
-		comet.sendMessage("Destruction du répertoire \"VocalyzeSIVOX\" et de ses sous répertoires.");
-		FileUtils.rmDir(new File(this.getInstallationFolder()+File.separator+"VocalyzeSIVOX"));
-		comet.sendMessage("Destruction du répertoire \"Listor\" et de ses sous répertoires.");
-		FileUtils.rmDir(new File(this.getInstallationFolder()+File.separator+"Listor"));
-		comet.sendMessage("Destruction du répertoire \"DListor\" et de ses sous répertoires.");
-		FileUtils.rmDir(new File(this.getInstallationFolder()+File.separator+"DListor"));
-		comet.sendMessage("Destruction du répertoire \"Aide\" et de ses sous répertoires.");
-		FileUtils.rmDir(new File(this.getInstallationFolder()+File.separator+"Aide"));
-		comet.sendMessage("Destruction du répertoire d'installation et de ses sous répertoires.");
-		FileUtils.rmDir(new File(this.getInstallationFolder()+File.separator));
-		if (OSValidator.isWindows() && !this.GameShortcutPath.equals("") && !this.HelpShortcutPath.equals("")) {
-			comet.sendMessage("Suppression du raccourcis Jeux DeViNT.");
-			FileUtils.rmDir(new File(this.GameShortcutPath));
-			comet.sendMessage("Suppression du raccourcis Aide DeViNT.");
-			FileUtils.rmDir(new File(this.HelpShortcutPath));
-			new File(this.getInstallationFolder()+File.separator+"installationid").delete();
+		comet.sendMessage("info: Destruction du répertoire \"lib\" et de ses sous répertoires.");
+		FileUtils.rmDir(new File(installationFolder+File.separator+"lib"));
+		comet.sendMessage("info: Destruction du répertoire \"jre\" et de ses sous répertoires.");
+		FileUtils.rmDir(new File(installationFolder+File.separator+"jre"));
+		comet.sendMessage("info: Destruction du répertoire \"VocalyzeSIVOX\" et de ses sous répertoires.");
+		FileUtils.rmDir(new File(installationFolder+File.separator+"VocalyzeSIVOX"));
+		comet.sendMessage("info: Destruction du répertoire \"Listor\" et de ses sous répertoires.");
+		FileUtils.rmDir(new File(installationFolder+File.separator+"Listor"));
+		comet.sendMessage("info: Destruction du répertoire \"DListor\" et de ses sous répertoires.");
+		FileUtils.rmDir(new File(installationFolder+File.separator+"DListor"));
+		comet.sendMessage("info: Destruction du répertoire \"Aide\" et de ses sous répertoires.");
+		FileUtils.rmDir(new File(installationFolder+File.separator+"Aide"));
+		//comet.sendMessage("info: Destruction du répertoire d'installation et de ses sous répertoires.");
+		//FileUtils.rmDir(new File(installationFolder+File.separator));
+		
+		String gameShortcutPath = "";
+		String helpShortcutPath = "";
+		
+		if (OSValidator.isWindowsSeven()) {
+			gameShortcutPath = System.getProperty("user.home")+File.separator+"Desktop"+File.separator+"Jeux DeViNT.lnk";
+			helpShortcutPath = System.getProperty("user.home")+File.separator+"Desktop"+File.separator+"Aide DeViNT.lnk";
+		} else if (OSValidator.isWindowsXP()) {
+			if (Locale.getDefault().equals(Locale.FRANCE)) {
+				gameShortcutPath = System.getProperty("user.home")+File.separator+"Bureau"+File.separator+"Jeux DeViNT.lnk";
+				helpShortcutPath = System.getProperty("user.home")+File.separator+"Bureau"+File.separator+"Aide DeViNT.lnk";
+			}else if (Locale.getDefault().equals(Locale.ENGLISH)) {
+				gameShortcutPath = System.getProperty("user.home")+File.separator+"Desktop"+File.separator+"Jeux DeViNT.lnk";
+				helpShortcutPath = System.getProperty("user.home")+File.separator+"Desktop"+File.separator+"Aide DeViNT.lnk";
+			}
+		}
+		
+		
+		if (OSValidator.isWindows() && !gameShortcutPath.equals("") && !helpShortcutPath.equals("")) {
+			comet.sendMessage("info: Suppression du raccourcis Jeux DeViNT.");
+			FileUtils.rmDir(new File(gameShortcutPath));
+			comet.sendMessage("info: Suppression du raccourcis Aide DeViNT.");
+			FileUtils.rmDir(new File(helpShortcutPath));
+			new File(installationFolder+File.separator+"installationid").delete();
 		}
 	}
+	
+	long copyTotalTime = System.currentTimeMillis() - startCopyTime;
+	
+	long copyTotalTimeSec = (copyTotalTime / 1000);
+	
+	long copyTotalTimeMin = (copyTotalTimeSec / 60);
+	
+	long copyTotalTimeSecRest = copyTotalTimeSec - (copyTotalTimeMin*60);
+	
+	comet.sendMessage("success: Désinstallation terminée!");
+	comet.sendMessage("success: Temps total de l'opération: " + copyTotalTimeMin + " minutes et "  + copyTotalTimeSecRest + " secondes (Total: " + copyTotalTime + " millisecondes)");
+	
+	comet.sendMessage("<a href=\"/end\" class=\"btn btn-large btn-primary\" >Suivant</a>");
+	
+	comet.close();
 }
   
   public static Result end() {
 	  int year = getYear();
-	  
-	  return ok(end.render("L'installation du CD DeViNT " + year + " est terminée!", year));
+	  if (session("uninstall") != null && session("uninstall").equals("true")) {
+		return ok(end.render("La désinstallation est terminée!", year, true));
+	  } else {
+		return ok(end.render("L'installation du CD DeViNT " + year + " est terminée!", year, false));
+	  }
   }
 }

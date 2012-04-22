@@ -1,4 +1,4 @@
-@(title: String, year: Integer)
+@(title: String, year: Integer, uninstall: Boolean)
 
 @main(title, year) {
     
@@ -6,30 +6,48 @@
 		<div class="span10 offset1">
 			<div class="hero-unit">
 				<h2>@title</h2>
-				<p>
-					Les projets sélectionnés ont été installés, et une icône de lancement 
-					intitulée "Jeux DeViNT" a été ajoutée sur le bureau.
-				</p>
-				<p>
-					La synthèse vocale SIVOX qui a été installée pour les projets Devint 
-					utilise le moteur et les voix françaises du projet MBROLA de l'Université 
-					Polytechnique de Mons en Belgique.
-				</p>
-				<p>
-					Une aide sur les projets a été installée, ainsi qu'une icône "Aide DeViNT" 
-					placée sur le bureau pour y accéder.
-				</p>
-				<p>
-					Vous pourrez dans le futur rajouter de nouveaux projets tirés du CD, ou les 
-					désinstaller tous en une fois.
-				</p>
-				<p>
-					A vous de jouer maintenant !
-				</p>
-				<p>
-					Cliquez sur le bouton 'Quitter' pour sortir de l'installation.
-				</p>
-				<a href="" class="btn btn-large btn-primary" />Quitter</a>
+                @if(!uninstall) {
+                    <p>
+                        Les projets sélectionnés ont été installés, et une icône de lancement 
+                        intitulée "Jeux DeViNT" a été ajoutée sur le bureau.
+                    </p>
+                    <p>
+                        La synthèse vocale SIVOX qui a été installée pour les projets Devint 
+                        utilise le moteur et les voix françaises du projet MBROLA de l'Université 
+                        Polytechnique de Mons en Belgique.
+                    </p>
+                    <p>
+                        Une aide sur les projets a été installée, ainsi qu'une icône "Aide DeViNT" 
+                        placée sur le bureau pour y accéder.
+                    </p>
+                    <p>
+                        Vous pourrez dans le futur rajouter de nouveaux projets tirés du CD, ou les 
+                        désinstaller tous en une fois.
+                    </p>
+                    <p>
+                        A vous de jouer maintenant !
+                    </p>
+                    <p>
+                        Cliquez sur le bouton 'Quitter' pour sortir de l'installation.
+                    </p>
+                    <a href="" class="btn btn-large btn-primary" />Quitter</a>
+                }
+                @if(uninstall) {
+                    <p>
+                        Les projets sélectionnés ont été déinstallés. Si vous aviez tout
+                        sélectionner, l'ensemble des vomposants du CD DeViNT ont été supprimés
+                    </p>
+                    <p>
+                        Vous pourrez dans le futur réinstaller ce que vous souhaitez.
+                    </p>
+                    <p>
+                        Merci d'avoir utilisé le CD DeViNT, nous espérons qu'il vous a plu.
+                    </p>
+                    <p>
+                        Cliquez sur le bouton 'Quitter' pour sortir de l'installation.
+                    </p>
+                    <a href="" class="btn btn-large btn-primary" />Quitter</a>
+                }
 			</div>
 		</div>
 	</div>

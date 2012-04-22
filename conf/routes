@@ -9,7 +9,8 @@ GET     /                           controllers.Application.index()
 GET     /licence                    controllers.Application.licence()
 
 # Config page
-GET     /config                    controllers.Application.config()
+GET     /config                    controllers.Application.config(uninstall = "")
+GET		/config/uninstall        controllers.Application.config(uninstall = "uninstall")
 
 # Game Choices page
 POST	/gamechoices				controllers.Application.gamechoices(sortedMethod = "year")

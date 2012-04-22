@@ -58,6 +58,9 @@ public class Game {
 
     	String[] dirContent = gameDir.list(); 
 
+        if (dirContent == null)
+            return null;
+
     	for (int i=0; i < dirContent.length; i++ ) { 
     		File game = new File( gameFolder + File.separator + dirContent[i] ); 
     		
@@ -65,11 +68,14 @@ public class Game {
     			Game newGame = Parsor.parse(gameFolder + File.separator + dirContent[i] + File.separator + "doc" + File.separator + "infos.xml");
     			if(newGame != null) {
     				newGame.setGameRep(game);
+                    games.add(newGame);
     			}
-    			games.add(newGame);
     		}
     	}
     	
+        if (games.size() == 0)
+            return null;
+            
     	return games;
     }
 
