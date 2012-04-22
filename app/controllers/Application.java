@@ -3,10 +3,16 @@ package controllers;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -14,6 +20,7 @@ import play.*;
 import play.libs.Comet;
 import play.mvc.*;
 import play.mvc.Http.*;
+import scala.actors.threadpool.Arrays;
 
 import views.html.*;
 
@@ -21,9 +28,11 @@ import models.*;
 
 public class Application extends Controller {
   
+	//public static final String CD_CONTENT_PATH = "." + File.separator + "resources" + File.separator + "CDContenu";
+	public static final String CD_CONTENT_PATH = ".";
 	public static final String YEAR_FILE_PATH = "." + File.separator + "resources" + File.separator + "year.txt";
-	public static final String GAMES_PATH = "." + File.separator + "resources" + File.separator + "CDContenu" + File.separator + "LesLogiciels" + File.separator;
-	public static final String GAMES_INFOS_PATH = "." + File.separator + "resources" + File.separator + "CDContenu" + File.separator + "GamesInfos" + File.separator;
+	public static final String GAMES_PATH = CD_CONTENT_PATH + File.separator + "LesLogiciels" + File.separator;
+	public static final String GAMES_INFOS_PATH = CD_CONTENT_PATH + File.separator + "GamesInfos" + File.separator;
 	
   public static int getYear() {
 	  Integer year = 0;
@@ -192,28 +201,356 @@ public class Application extends Controller {
 	  RequestBody body = request().body();
 	  Map<String,String[]> args = body.asFormUrlEncoded();
 	  
-	  String test = "";
+	  String selectedGamesString = "";
 	  
 	  if(args != null && args.keySet().contains("games")) {  
 		  String[] selectedGames = args.get("games");
 		  for(String sg : selectedGames) {
-			  test += sg + "<br /><br />"; 
+			  selectedGamesString += sg + "_SG_"; 
 		  }
 	  }
 	  
-	return ok(installation.render("Installation en cours", year, test));
+	  session("selectedGames", selectedGamesString);
+	  
+	  return ok(installation.render("Installation: copie des fichiers", year));
   }
   
   public static Result comet() {
+	  final String installationFolder = session("installfolder");
+	  final String[] selectedGames = session("selectedGames").split("_SG_");
       Comet comet = new Comet("parent.cometMessage") {
           public void onConnected() {
-		      sendMessage("kiki");
-		      sendMessage("foo");
-		      sendMessage("bar");
-		      close();
+        	  launchCopy(this, installationFolder, selectedGames);
 		    }
       };
       
       return ok(comet);
+  }
+  
+  public static void launchCopy(Comet comet, String installationFolder, String[] selectedGames) {  
+	  	long startCopyTime = System.currentTimeMillis();
+		
+		// launchUninstall(); sendMessage("bar")
+		
+		ArrayList<Game> games = Game.getAll(GAMES_PATH);
+		
+		ArrayList<Game> toInstall = new ArrayList<Game>();
+		
+		for(Game g : games) {
+			for(String sg : selectedGames) {
+				if(sg.equals(g.getGameRep().toString())) {
+					toInstall.add(g);
+				}
+			}
+		}
+		
+		if (toInstall.size() != 0) {
+			File installDir =  new File(installationFolder);
+			if(!installDir.exists()) {
+				installDir.mkdirs();
+			}
+			
+//			File idfile = new File(this.getInstallationFolder()+File.separator+"installationid");
+//			if (!idfile.exists()) {
+//				try {
+//					FileWriter fw = new FileWriter(idfile);
+//					fw.write(""+this.getInstallationFolder().hashCode());
+//					fw.flush();
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+			
+			/* Copie du bon répertoire Jre */
+			if (!new File(installationFolder + File.separator + "jre" + File.separator).exists()) {
+				if(OSValidator.isWindows()) {
+					try {
+						comet.sendMessage("info: Copie du répertoire \"jre\" et de ses sous-répertoires");
+						FileUtils.copy(new File(CD_CONTENT_PATH + File.separator + "jre" + File.separator + "win"), new File(installationFolder + File.separator + "jre" + File.separator));
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else if(OSValidator.isUnix()) {
+					try {
+						comet.sendMessage("info: Copie du répertoire \"jre\" et de ses sous-répertoires");
+						FileUtils.copy(new File(CD_CONTENT_PATH + File.separator + "jre" + File.separator + "linux"), new File(installationFolder + File.separator + "jre" + File.separator));
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else if(OSValidator.isMac()) {
+					try {
+						comet.sendMessage("info: Copie du répertoire \"jre\" et de ses sous-répertoires");
+						FileUtils.copy(new File(CD_CONTENT_PATH + File.separator + "jre" + File.separator + "mac"), new File(installationFolder + File.separator + "jre" + File.separator));
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			/* Copie du bon répertoire Lib */
+			if (!new File(installationFolder + File.separator + "lib" + File.separator).exists()) {
+				if(OSValidator.isWindows()) {
+					try {
+						comet.sendMessage("info: Copie du répertoire \"lib\" et de ses sous-répertoires");
+						FileUtils.copy(new File(CD_CONTENT_PATH + File.separator + "lib" + File.separator + "win"), new File(installationFolder + File.separator + "lib" + File.separator));
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else if(OSValidator.isUnix()) {
+					try {
+						comet.sendMessage("info: Copie du répertoire \"lib\" et de ses sous-répertoires");
+						FileUtils.copy(new File(CD_CONTENT_PATH + File.separator + "lib" + File.separator + "linux"), new File(installationFolder + File.separator + "lib" + File.separator));
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else if(OSValidator.isMac()) {
+					try {
+						comet.sendMessage("info: Copie du répertoire \"lib\" et de ses sous-répertoires");
+						FileUtils.copy(new File(CD_CONTENT_PATH + File.separator + "lib" + File.separator + "mac"), new File(installationFolder + File.separator + "lib" + File.separator));
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			/* Copie de DListor */
+			if (!new File(installationFolder + File.separator + "DListor" + File.separator).exists()) {
+				try {
+					comet.sendMessage("info: Copie du répertoire \"DListor\" et de ses sous-répertoires");
+					FileUtils.copy(new File(CD_CONTENT_PATH + File.separator + "DListor" + File.separator), new File(installationFolder + File.separator + "DListor" + File.separator));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			if (!new File(installationFolder + File.separator + "VocalyzeSIVOX" + File.separator).exists()) {
+				/* Copie de VocalyzeSIVOX */
+				try {
+					comet.sendMessage("info: Copie du répertoire \"VocalyzeSIVOX\" et de ses sous-répertoires");
+					//FileUtils.copy(new File(CD_CONTENT_PATH + File.separator + "LesLogiciels" + File.separator + "VocalyzeSIVOX" + File.separator), new File(installationFolder + File.separator + "VocalyzeSIVOX" + File.separator));
+					FileUtils.copy(new File(CD_CONTENT_PATH + File.separator + "VocalyzeSIVOX" + File.separator), new File(installationFolder + File.separator + "VocalyzeSIVOX" + File.separator));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			/* Copie des jeux sélectionnés  */
+			for(Game g: toInstall) {
+				try {
+					comet.sendMessage("info: Copie du projet \"" + g.getTitle() + "\" (répertoire \"" + g.getGameRep().getName() + "\" et ses sous-répertoires)");
+					FileUtils.copy(g.getGameRep(), new File(installationFolder + File.separator + g.getGameRep().getName() + File.separator));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				HelpUtils.GAMELIST += "<li><a href=\"jeux/" + g.getGameRep().getName() + ".html\" title=\"" + g.getTitle() + "\"><strong>" + g.getTitle() + "</strong></a></li>\n";
+				HelpUtils.GAMELIST_INGAMEFOLDER += "<li><a href=\"" + g.getGameRep().getName() + ".html\" title=\"" + g.getTitle() + "\"><strong>" + g.getTitle() + "</strong></a></li>\n";
+			}
+			
+			/* Création de l'aide */
+			comet.sendMessage("info: -- Génération de l'aide --");
+			try {
+				comet.sendMessage("info: Copie des fichiers de base de l'aide");
+				FileUtils.copy(new File(CD_CONTENT_PATH + File.separator + "DHelp" + File.separator), new File(installationFolder + File.separator + "Aide" + File.separator));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			HelpUtils.GAMELIST = "<h1>Aide sur les projets installés</h1>\n<ul id=\"listjeux\">\n" + HelpUtils.GAMELIST + "</ul>\n";
+			HelpUtils.GAMELIST_INGAMEFOLDER = "<h1>Aide sur les projets installés</h1>\n<ul id=\"listjeux\">\n" + HelpUtils.GAMELIST_INGAMEFOLDER + "</ul>\n";
+			
+				// Création du fichier jeux.html
+			
+			
+			String jeuxContent = HelpUtils.HEADER + HelpUtils.GAMELIST;
+			jeuxContent += "<div id=\"aidejeu\">\n";
+			jeuxContent += "Cliquez sur le nom d'un jeu ci-contre pour voir l'aide associée :)\n";
+			jeuxContent += "</div>\n";
+			jeuxContent += HelpUtils.FOOTER;
+			FileUtils.write(installationFolder + File.separator + "Aide" + File.separator + "jeux.html"  , jeuxContent);
+			
+				
+				//Création de tous les fichiers aides des jeux installés
+			for(Game g: toInstall) {
+				comet.sendMessage("info: Génération de l'aide pour le jeu \"" + g.getTitle() + "\"");
+				String gameContent = HelpUtils.HEADER_INGAMEFOLDER + HelpUtils.GAMELIST_INGAMEFOLDER;
+				gameContent += "<div id=\"aidejeu\">\n";
+				
+				gameContent += "	<div class=\"jeu_title\">\n";
+				gameContent += "<h1>" + g.getTitle() + "</h1>\n";
+				gameContent += "	</div>\n";
+				
+				
+				
+				gameContent += "	<div class=\"jeu_authors boite\">\n";
+				gameContent += "		<div class=\"boite_title\">\n";
+				gameContent += "		Auteurs\n";
+				gameContent += "		</div>\n";
+				gameContent += "		<div class=\"boite_content\">\n";
+				for(String author: g.getAuthors()) {
+					gameContent += "		<div class=\"jeu_author\">\n";
+					gameContent += author + "\n";
+					gameContent += "		</div>\n";
+				}
+				gameContent += "	<div class=\"clear\">&nbsp;</div>\n";
+				gameContent += "		</div>\n";
+				gameContent += "	</div>\n";
+				
+				gameContent += "	<div class=\"jeu_year\">\n";
+				gameContent += "<u>Année</u>: " + g.getAnnee() + "\n";
+				gameContent += "	</div>\n";
+				
+				gameContent += "	<div class=\"jeu_public\">\n";
+				gameContent += "<u>Public</u>: " + g.getPublicStyle().toString() + "\n";
+				gameContent += "	</div>\n";
+				
+				gameContent += "	<div class=\"jeu_age\">\n";
+				gameContent += "<u>Age</u>: " + g.getAge() + "\n";
+				gameContent += "	</div>\n";
+				
+				gameContent += "	<div class=\"jeu_categories\">\n";
+				gameContent += "	<u>Catégories de jeux</u>:<br/>\n";
+				for(GameCategory gc: g.getGameCategories()) {
+					gameContent += "		<div class=\"jeu_category\">\n";
+					gameContent += gc.toString() + "\n";
+					gameContent += "		</div>\n";
+				}
+				gameContent += "	</div>\n";
+				
+				gameContent += "	<div class=\"clear\">&nbsp;</div>\n";
+				
+				gameContent += "	<div class=\"jeu_shortdesc boite\">\n";
+				gameContent += "		<div class=\"boite_title\">\n";
+				gameContent += "		Résumé\n";
+				gameContent += "		</div>\n";
+				gameContent += "		<div class=\"boite_content\">\n";
+				gameContent += g.getShortDescription() + "\n";
+				gameContent += "		</div>\n";
+				gameContent += "	</div>\n";
+				
+				gameContent += "	<div class=\"jeu_gamerules boite\">\n";
+				gameContent += "		<div class=\"boite_title\">\n";
+				gameContent += "		Règles du jeu\n";
+				gameContent += "		</div>\n";
+				gameContent += "		<div class=\"boite_content\">\n";
+				gameContent += g.getGameRules() + "\n";
+				gameContent += "		</div>\n";
+				gameContent += "	</div>\n";
+				
+				gameContent += "	<div class=\"jeu_gameplay boite\">\n";
+				gameContent += "		<div class=\"boite_title\">\n";
+				gameContent += "		Commandes du jeu\n";
+				gameContent += "		</div>\n";
+				gameContent += "		<div class=\"boite_content\">\n";
+				gameContent += g.getGamePlay() + "\n";
+				gameContent += "		</div>\n";
+				gameContent += "	</div>\n";
+				
+				gameContent += "	<div class=\"jeu_notes boite\">\n";
+				gameContent += "		<div class=\"boite_title\">\n";
+				gameContent += "		Notes sur le jeu\n";
+				gameContent += "		</div>\n";
+				gameContent += "		<div class=\"boite_content\">\n";
+				gameContent += "			<ul>\n";
+				for(String note: g.getNotes()) {
+					gameContent += "		<li class=\"jeu_note\">\n";
+					gameContent += note + "\n";
+					gameContent += "		</li>\n";
+				}
+				gameContent += "			</ul>\n";
+				gameContent += "		</div>\n";
+				gameContent += "	</div>\n";
+				
+				
+				
+				gameContent += "</div>\n";
+				gameContent += HelpUtils.FOOTER;
+				
+				String gameHelpFilePath = installationFolder + File.separator + "Aide" + File.separator + "jeux" + File.separator + g.getGameRep().getName() + ".html";
+				FileUtils.write(gameHelpFilePath , gameContent);
+				
+				File helpFolder = new File(g.getGameRep().getAbsolutePath() + File.separator + "doc" + File.separator + g.getGameRep().getName() + File.separator);
+				if(helpFolder.exists()) {
+					try {
+						FileUtils.copy(helpFolder, new File(installationFolder + File.separator + "Aide" + File.separator + "jeux" + File.separator + g.getGameRep().getName() + File.separator));
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			String gameShortcutPath = "";
+			String helpShortcutPath = "";
+			
+			if (OSValidator.isWindowsSeven()) {
+				gameShortcutPath = System.getProperty("user.home")+File.separator+"Desktop"+File.separator+"Jeux DeViNT.lnk";
+				helpShortcutPath = System.getProperty("user.home")+File.separator+"Desktop"+File.separator+"Aide DeViNT.lnk";
+			} else if (OSValidator.isWindowsXP()) {
+				if (Locale.getDefault().equals(Locale.FRANCE)) {
+					gameShortcutPath = System.getProperty("user.home")+File.separator+"Bureau"+File.separator+"Jeux DeViNT.lnk";
+					helpShortcutPath = System.getProperty("user.home")+File.separator+"Bureau"+File.separator+"Aide DeViNT.lnk";
+				}else if (Locale.getDefault().equals(Locale.ENGLISH)) {
+					gameShortcutPath = System.getProperty("user.home")+File.separator+"Desktop"+File.separator+"Jeux DeViNT.lnk";
+					helpShortcutPath = System.getProperty("user.home")+File.separator+"Desktop"+File.separator+"Aide DeViNT.lnk";
+				}
+			}
+			
+			/* Création des icones pour windows */
+			if(OSValidator.isWindows() && !gameShortcutPath.equals("") && !helpShortcutPath.equals("")) {
+				try {
+					Shortcut scutJeux = new Shortcut(new File(installationFolder+File.separator+"DListor"+File.separator+"bin"+File.separator+"execution.bat"));
+					Shortcut scutAide = new Shortcut(new File(installationFolder+File.separator+"Aide"+File.separator+"index.html"));
+					OutputStream osJeux = new FileOutputStream(gameShortcutPath);
+					OutputStream osAide = new FileOutputStream(helpShortcutPath);
+					osJeux.write(scutJeux.getBytes());
+					osJeux.flush();
+					osJeux.close();
+					osAide.write(scutAide.getBytes());
+					osAide.flush();
+					osAide.close();
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}	
+		
+		long copyTotalTime = System.currentTimeMillis() - startCopyTime;
+		
+		long copyTotalTimeSec = (copyTotalTime / 1000);
+		
+		long copyTotalTimeMin = (copyTotalTimeSec / 60);
+		
+		long copyTotalTimeSecRest = copyTotalTimeSec - (copyTotalTimeMin*60);
+		
+		comet.sendMessage("success: Installation terminée!");
+		comet.sendMessage("success: Temps total de l'installation: " + copyTotalTimeMin + " minutes et "  + copyTotalTimeSecRest + " secondes (Total: " + copyTotalTime + " millisecondes)");
+		
+		comet.sendMessage("<a href=\"/end\" class=\"btn btn-large btn-primary\" >Suivant</a>");
+		
+		comet.close();
+		
+	}
+  
+  public static Result end() {
+	  int year = getYear();
+	  
+	  return ok(end.render("L'installation du CD DeViNT " + year + " est terminée!", year));
   }
 }

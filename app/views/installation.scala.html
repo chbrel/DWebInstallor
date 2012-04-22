@@ -1,21 +1,35 @@
-@(title: String, year: Integer, test : String)
+@(title: String, year: Integer)
 
 @main(title, year) {
 			<script type="text/javascript">
 			  var cometMessage = function(event) {
-			    $('#installationLog').append('Received event: ' + event + '<br/>');
-			    
+			    if(event.indexOf("info: ",0) != -1) {
+			    	var info = event.substring(6,event.length);
+			    	$('#installInfo').append('' + info + '<br/>');
+			    } else {
+			    	if(event.indexOf("success: ",0) != -1) {
+			    		var success = event.substring(9,event.length);
+			    		$('#installSucess').show();
+			    		$('#installSucess').append('' + success + '<br/>');
+			    	} else {
+			    		$('#installationLog').append('' + event + '<br/>');
+			    	}
+			    }
 			  }
 			</script>
 			
-			<iframe src="/comet"></iframe>
+			<iframe src="/comet" style="display: none;"></iframe>
 						
 			<div class="row">
 				<div class="span10 offset1">
 					<div class="hero-unit">
 						<h2>@title</h2>
 						<div id="installationLog">
-						@Html(test)
+							<div class="alert alert-info" id="installInfo">
+							</div>
+							
+							<div class="alert alert-success" id="installSucess" style="display:none;">
+							</div>
 						</div>
 					</div>
 				</div>
