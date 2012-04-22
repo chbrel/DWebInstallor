@@ -586,27 +586,33 @@ public static void launchUninstall(Comet comet, String installationFolder, Strin
 			for (int i = 0; i<nbChar; i++) {
 				fileNumber+=cbuf[i];
 			}
+			fr.close();
 			try {
 				if (Integer.parseInt(fileNumber) != installationFolder.hashCode()) {
 					comet.sendMessage("Il n'existe pas de projets déjà installés dans "+installationFolder);
+					//comet.sendMessage("<a href=\"/end\" class=\"btn btn-large btn-primary\" >Suivant</a>");
 					return;
 				}
 			} catch (NumberFormatException e) {
 				comet.sendMessage("Il n'existe pas de projets déjà installés dans "+installationFolder);
+				//comet.sendMessage("<a href=\"/end\" class=\"btn btn-large btn-primary\" >Suivant</a>");
 				return;
 			}
 		} catch (FileNotFoundException e) {
 			comet.sendMessage("Il n'existe pas de projets déjà installés dans "+installationFolder);
+			//comet.sendMessage("<a href=\"/end\" class=\"btn btn-large btn-primary\" >Suivant</a>");
 			e.printStackTrace();
 			return;
 		} catch (IOException e) {
 			comet.sendMessage("Il n'existe pas de projets déjà installés dans "+installationFolder);
+			//comet.sendMessage("<a href=\"/end\" class=\"btn btn-large btn-primary\" >Suivant</a>");
 			e.printStackTrace();
 			return;
 		}
 		
 	} else {
 		comet.sendMessage("Il n'existe pas de projets déjà installés dans "+installationFolder);
+		//comet.sendMessage("<a href=\"/end\" class=\"btn btn-large btn-primary\" >Suivant</a>");
 		return;
 	}
 	
@@ -651,8 +657,13 @@ public static void launchUninstall(Comet comet, String installationFolder, Strin
 		FileUtils.rmDir(new File(installationFolder+File.separator+"DListor"));
 		comet.sendMessage("info: Destruction du répertoire \"Aide\" et de ses sous répertoires.");
 		FileUtils.rmDir(new File(installationFolder+File.separator+"Aide"));
+		//That was too violent, it was deleting everything in the directory.
+		//Might use new File(...).delete instead if feel necessary
 		//comet.sendMessage("info: Destruction du répertoire d'installation et de ses sous répertoires.");
 		//FileUtils.rmDir(new File(installationFolder+File.separator));
+		
+		//delete the file identifying the directory as a DeViNT installation dir.
+		idfile.delete();
 		
 		String gameShortcutPath = "";
 		String helpShortcutPath = "";
@@ -676,7 +687,6 @@ public static void launchUninstall(Comet comet, String installationFolder, Strin
 			FileUtils.rmDir(new File(gameShortcutPath));
 			comet.sendMessage("info: Suppression du raccourcis Aide DeViNT.");
 			FileUtils.rmDir(new File(helpShortcutPath));
-			new File(installationFolder+File.separator+"installationid").delete();
 		}
 	}
 	
