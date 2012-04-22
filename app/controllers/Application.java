@@ -28,8 +28,8 @@ import models.*;
 
 public class Application extends Controller {
   
-	//public static final String CD_CONTENT_PATH = "." + File.separator + "resources" + File.separator + "CDContenu";
-	public static final String CD_CONTENT_PATH = ".";
+	public static final String CD_CONTENT_PATH = "." + File.separator + "resources" + File.separator + "CDContenu";
+	//public static final String CD_CONTENT_PATH = ".";
 	public static final String YEAR_FILE_PATH = "." + File.separator + "resources" + File.separator + "year.txt";
 	public static final String GAMES_PATH = CD_CONTENT_PATH + File.separator + "LesLogiciels" + File.separator;
 	public static final String GAMES_INFOS_PATH = CD_CONTENT_PATH + File.separator + "GamesInfos" + File.separator;
@@ -183,8 +183,9 @@ public class Application extends Controller {
 			html += "<ul>";
 			
 			for(Game g: catGames.get(gameCat)) {
+				String clearGameTitle = g.getTitle().toLowerCase().replaceAll(" ", "");
 				html += "<li><label class=\"checkbox\">";
-				html += "<input type=\"checkbox\" class=\"game game_" + clearCatName + "\" name=\"games\" value=\"" + g.getGameRep() + "\" /> " + g.getTitle();
+				html += "<input type=\"checkbox\" class=\"game game_" + clearCatName + " game_" + clearGameTitle + "\" onchange=\"javascript:selectGame(this, 'game_" + clearGameTitle + "')\" name=\"games\" value=\"" + g.getGameRep() + "\" /> " + g.getTitle();
 				html += "</label></li>";
 			}
 		

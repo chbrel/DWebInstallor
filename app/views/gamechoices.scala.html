@@ -4,10 +4,16 @@
 			<script type="text/javascript">
 				function selectAll(className) {
 					if($('#' + className + '_all').attr('checked')) {
-						$('.' + className).attr('checked', false);
 						$('.' + className).attr('checked', true);
 					} else {
+						$('.' + className).attr('checked', false);
+					}
+				}
+				
+				function selectGame(input, className) {
+					if($(input).attr('checked')) {
 						$('.' + className).attr('checked', true);
+					} else {
 						$('.' + className).attr('checked', false);
 					}
 				}
