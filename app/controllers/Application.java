@@ -250,17 +250,18 @@ public class Application extends Controller {
 				installDir.mkdirs();
 			}
 			
-//			File idfile = new File(this.getInstallationFolder()+File.separator+"installationid");
-//			if (!idfile.exists()) {
-//				try {
-//					FileWriter fw = new FileWriter(idfile);
-//					fw.write(""+this.getInstallationFolder().hashCode());
-//					fw.flush();
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
+			File idfile = new File(this.getInstallationFolder()+File.separator+"installationid");
+			if (!idfile.exists()) {
+				try {
+					FileWriter fw = new FileWriter(idfile);
+					fw.write(""+this.getInstallationFolder().hashCode());
+					fw.flush();
+					fw.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			
 			/* Copie du bon répertoire Jre */
 			if (!new File(installationFolder + File.separator + "jre" + File.separator).exists()) {
@@ -547,6 +548,94 @@ public class Application extends Controller {
 		comet.close();
 		
 	}
+	
+public void launchUninstall(Comet comet, String installationFolder, String[] selectedGames) {
+	File idfile = new File(installationFolder+File.separator+"installationid");
+	if (idfile.exists() && idfile.isFile()) {
+		try {
+			FileReader fr = new FileReader(idfile);
+			char[] cbuf = new char[50]; 
+			int nbChar = fr.read(cbuf);
+			String fileNumber = "";
+			for (int i = 0; i<nbChar; i++) {
+				fileNumber+=cbuf[i];
+			}
+			try {
+				if (Integer.parseInt(fileNumber) != this.getInstallationFolder().hashCode()) {
+					comet.sendMessage("Il n'existe pas de projets déjà installés dans "+this.getInstallationFolder());
+					return;
+				}
+			} catch (NumberFormatException e) {
+				comet.sendMessage("Il n'existe pas de projets déjà installés dans "+this.getInstallationFolder());
+				return;
+			}
+		} catch (FileNotFoundException e) {
+			comet.sendMessage("Il n'existe pas de projets déjà installés dans "+this.getInstallationFolder());
+			e.printStackTrace();
+			return;
+		} catch (IOException e) {
+			comet.sendMessage("Il n'existe pas de projets déjà installés dans "+this.getInstallationFolder());
+			e.printStackTrace();
+			return;
+		}
+		
+	} else {
+		comet.sendMessage("Il n'existe pas de projets déjà installés dans "+this.getInstallationFolder());
+		return;
+	}
+	
+	ArrayList<Game> installedGames = Game.getAll(this.getInstallationFolder());
+	
+	if (installedGames == null) {
+		return;
+	}
+	
+	ArrayList<Game> toUninstall = new ArrayList<Game>();
+	
+	for(Game g : games) {
+		for(String sg : selectedGames) {
+			if(sg.equals(g.getGameRep().toString())) {
+				toUninstall.add(g);
+			}
+		}
+	}
+	
+	boolean uninstallAll = (toUninstall.size() == installedGames.size());
+	
+	for (Game game : installedGames) {
+		if ((toUninstall.contains(game)) && game != null) {
+			comet.sendMessage("Désinstallation de "+game.getTitle());
+			FileUtils.rmDir(game.getGameRep());
+		}
+	}
+	
+	comet.sendMessage("Suppression des aides générées précédemment.");
+	FileUtils.rmDir(new File(this.getInstallationFolder()+File.separator+"Aide"));
+	
+	if (uninstallAll) {
+		comet.sendMessage("Destruction du répertoire \"lib\" et de ses sous répertoires.");
+		FileUtils.rmDir(new File(this.getInstallationFolder()+File.separator+"lib"));
+		comet.sendMessage("Destruction du répertoire \"jre\" et de ses sous répertoires.");
+		FileUtils.rmDir(new File(this.getInstallationFolder()+File.separator+"jre"));
+		comet.sendMessage("Destruction du répertoire \"VocalyzeSIVOX\" et de ses sous répertoires.");
+		FileUtils.rmDir(new File(this.getInstallationFolder()+File.separator+"VocalyzeSIVOX"));
+		comet.sendMessage("Destruction du répertoire \"Listor\" et de ses sous répertoires.");
+		FileUtils.rmDir(new File(this.getInstallationFolder()+File.separator+"Listor"));
+		comet.sendMessage("Destruction du répertoire \"DListor\" et de ses sous répertoires.");
+		FileUtils.rmDir(new File(this.getInstallationFolder()+File.separator+"DListor"));
+		comet.sendMessage("Destruction du répertoire \"Aide\" et de ses sous répertoires.");
+		FileUtils.rmDir(new File(this.getInstallationFolder()+File.separator+"Aide"));
+		comet.sendMessage("Destruction du répertoire d'installation et de ses sous répertoires.");
+		FileUtils.rmDir(new File(this.getInstallationFolder()+File.separator));
+		if (OSValidator.isWindows() && !this.GameShortcutPath.equals("") && !this.HelpShortcutPath.equals("")) {
+			comet.sendMessage("Suppression du raccourcis Jeux DeViNT.");
+			FileUtils.rmDir(new File(this.GameShortcutPath));
+			comet.sendMessage("Suppression du raccourcis Aide DeViNT.");
+			FileUtils.rmDir(new File(this.HelpShortcutPath));
+			new File(this.getInstallationFolder()+File.separator+"installationid").delete();
+		}
+	}
+}
   
   public static Result end() {
 	  int year = getYear();
