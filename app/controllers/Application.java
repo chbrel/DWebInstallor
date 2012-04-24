@@ -1,5 +1,6 @@
 package controllers;
 
+import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,6 +10,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -263,6 +266,7 @@ public class Application extends Controller {
 			for(String sg : selectedGames) {
 				if(sg.equals(g.getGameRep().toString())) {
 					toInstall.add(g);
+					break;
 				}
 			}
 		}
@@ -628,6 +632,7 @@ public static void launchUninstall(Comet comet, String installationFolder, Strin
 		for(String sg : selectedGames) {
 			if(sg.equals(g.getGameRep().toString())) {
 				toUninstall.add(g);
+				break;
 			}
 		}
 	}
@@ -714,4 +719,33 @@ public static void launchUninstall(Comet comet, String installationFolder, Strin
 		return ok(end.render("L'installation du CD DeViNT " + year + " est terminée!", year, false));
 	  }
   }
+  
+  public static Result exit() {
+	  int year = getYear();
+	  Result res = ok(exit.render(year));
+	  ExitThread et = new ExitThread();
+	  et.start();
+	  return res;
+  }
+  
+  static class ExitThread extends Thread {
+	  ExitThread() {
+			
+	    }
+
+	    public void run() {
+	    	Logger.info("Waiting two seconds...");
+	    	
+	    	try {
+	    		Thread.sleep(2000);
+	    	} catch (InterruptedException e1) {
+	    		// TODO Auto-generated catch block
+	    		e1.printStackTrace();
+	    	}
+	    	
+	    	Logger.info("Close application...");
+	    	
+	    	System.exit(0);
+	    }
+	}
 }
