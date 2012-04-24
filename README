@@ -1,4 +1,8 @@
-This is your new Play 2.0 application
-=====================================
+TODO
 
-This file will be packaged with your application, when using `play dist`.
+-> mettre les logos dans le header
+-> mettre au moins le premier bouton sur l'index en vert et changer pour "Installer"
+-> enlever les doublons au moment de l'installation (après sélection des jeux dans catégorie)
+-> faire un delay sur l'ouverture du navigateur
+-> regarder pour embarquer un navigateur
+-> bug CSS sous firefox

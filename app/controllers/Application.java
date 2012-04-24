@@ -28,8 +28,8 @@ import models.*;
 
 public class Application extends Controller {
   
-	public static final String CD_CONTENT_PATH = "." + File.separator + "resources" + File.separator + "CDContenu";
-	//public static final String CD_CONTENT_PATH = ".";
+	//public static final String CD_CONTENT_PATH = "." + File.separator + "resources" + File.separator + "CDContenu";
+	public static final String CD_CONTENT_PATH = ".";
 	public static final String YEAR_FILE_PATH = "." + File.separator + "resources" + File.separator + "year.txt";
 	public static final String GAMES_PATH = CD_CONTENT_PATH + File.separator + "LesLogiciels" + File.separator;
 	public static final String GAMES_INFOS_PATH = CD_CONTENT_PATH + File.separator + "GamesInfos" + File.separator;
