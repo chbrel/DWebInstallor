@@ -10,6 +10,8 @@ To CHECK (en particulier, car sinon tout est à vérifier :) )
 
 TODO
 -> bug CSS sous firefox
--> Regénéré l'aide lors de la désinstallation
+-> Regénéré l'aide lors de la désinstallation => Plus complexe que ça, il faut revoir la méthode
+de génération de l'aide pour faire une méthode commune à l'installation et la désinstallation. Nécessité à l'installation
+de conaître les jeux précédemment installées pour pouvoir créer un fichier jeux.html correct.
 -> Ajouter en argument le dossier tmp dans le script start pour l'écriture des fichiers de log et le pid_file
 
