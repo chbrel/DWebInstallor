@@ -31,8 +31,8 @@ import models.*;
 
 public class Application extends Controller {
   
-	//public static final String CD_CONTENT_PATH = "." + File.separator + "resources" + File.separator + "CDContenu";
-	public static final String CD_CONTENT_PATH = ".";
+	public static final String CD_CONTENT_PATH = "." + File.separator + "resources" + File.separator + "CDContenu";
+	//public static final String CD_CONTENT_PATH = ".";
 	public static final String YEAR_FILE_PATH = "." + File.separator + "resources" + File.separator + "year.txt";
 	public static final String GAMES_PATH = CD_CONTENT_PATH + File.separator + "LesLogiciels" + File.separator;
 	public static final String GAMES_INFOS_PATH = CD_CONTENT_PATH + File.separator + "GamesInfos" + File.separator;
@@ -643,11 +643,10 @@ public static void launchUninstall(Comet comet, String installationFolder, Strin
 		if ((toUninstall.contains(game)) && game != null) {
 			comet.sendMessage("info: Désinstallation de "+game.getTitle());
 			FileUtils.rmDir(game.getGameRep());
+			new File(installationFolder + File.separator + "Aide" + File.separator + "jeux" + File.separator + game.getGameRep().getName() + ".html").delete();
+			FileUtils.rmDir(new File(installationFolder + File.separator + "Aide" + File.separator + "jeux" + File.separator + game.getGameRep().getName()));
 		}
 	}
-	
-	comet.sendMessage("info: Suppression des aides générées précédemment.");
-	FileUtils.rmDir(new File(installationFolder+File.separator+"Aide"));
 	
 	if (uninstallAll) {
 		comet.sendMessage("info: Destruction du répertoire \"lib\" et de ses sous répertoires.");
@@ -693,7 +692,25 @@ public static void launchUninstall(Comet comet, String installationFolder, Strin
 			comet.sendMessage("info: Suppression du raccourcis Aide DeViNT.");
 			FileUtils.rmDir(new File(helpShortcutPath));
 		}
-	}
+	} else {
+		/* Mise à jour de l'aide */
+		new File(installationFolder + File.separator + "Aide" + File.separator + "jeux.html").delete();
+		HelpUtils.GAMELIST =  "";
+		HelpUtils.GAMELIST_INGAMEFOLDER = "";
+		installedGames.removeAll(toUninstall);
+		ArrayList<Game> toInstall = installedGames;
+		for(Game g: toInstall) {
+			HelpUtils.GAMELIST += "<li><a href=\"jeux/" + g.getGameRep().getName() + ".html\" title=\"" + g.getTitle() + "\"><strong>" + g.getTitle() + "</strong></a></li>\n";
+			HelpUtils.GAMELIST_INGAMEFOLDER += "<li><a href=\"" + g.getGameRep().getName() + ".html\" title=\"" + g.getTitle() + "\"><strong>" + g.getTitle() + "</strong></a></li>\n";
+		}
+		
+        String jeuxContent = HelpUtils.HEADER + HelpUtils.GAMELIST;
+        jeuxContent += "<div id=\"aidejeu\">\n";
+        jeuxContent += "Cliquez sur le nom d'un jeu ci-contre pour voir l'aide associée :)\n";
+        jeuxContent += "</div>\n";
+        jeuxContent += HelpUtils.FOOTER;
+        FileUtils.write(installationFolder + File.separator + "Aide" + File.separator + "jeux.html"  , jeuxContent);
+    }
 	
 	long copyTotalTime = System.currentTimeMillis() - startCopyTime;
 	
