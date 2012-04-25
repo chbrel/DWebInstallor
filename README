@@ -1,0 +1,63 @@
+Structure des dossiers:
+
+.
+├── [drwxr-xr-x]  CDContenu
+│   │
+│   ├── [drwxrwxr-x]  DHelp
+│   │   ├── [-rw-rw-r--]  api.html
+│   │   ├── [drwxrwxr-x]  bin
+│   │   ├── [-rw-rw-r--]  contact.html
+│   │   ├── [drwxrwxr-x]  css
+│   │   ├── [-rw-rw-r--]  faq.html
+│   │   ├── [-rw-rw-r--]  index.html
+│   │   ├── [-rw-rw-r--]  installation.html
+│   │   ├── [drwxrwxr-x]  jeux
+│   │   ├── [-rw-rw-r--]  os.html
+│   │   ├── [drwxrwxr-x]  resources
+│   │   └── [drwxrwxr-x]  src
+│   │
+│   ├── [drwxrwxr-x]  DListor
+│   │   ├── [drwxrwxr-x]  bin
+│   │   ├── [-rw-rw-r--]  compilation.bat
+│   │   ├── [-rwxrwxr-x]  compilation.sh
+│   │   ├── [drwxrwxr-x]  lib
+│   │   ├── [-rw-rw-r--]  README.txt
+│   │   ├── [drwxrwxr-x]  ressources
+│   │   └── [drwxrwxr-x]  src
+│   │
+│   ├── [drwxrwxr-x]  jre
+│   │
+│   ├── [drwxrwxr-x]  LesLogiciels
+│   │   ├── [drwxrwxr-x]  Block-Dutz
+│   │   ├── [drwxrwxr-x]  Prisma
+│   │   ├── [drwxrwxr-x]  Reflex
+│   │   └── [drwxr-xr-x]  Songe
+│   │
+│   ├── [drwxrwxr-x]  lib
+│   │   ├── [-rw-rw-r--]  bluesock.dll
+│   │   ├── [-rw-rw-r--]  gluegen-rt.dll
+│   │   ├── [-rw-rw-r--]  jinput-dx8.dll
+│   │   ├── [-rw-rw-r--]  jinput-raw.dll
+│   │   ├── [-rw-rw-r--]  jjstick.dll
+│   │   ├── [-rw-rw-r--]  joal_native.dll
+│   │   ├── [-rw-rw-r--]  lwjgl.dll
+│   │   ├── [-rw-rw-r--]  OpenAL32.dll
+│   │   ├── [-rw-rw-r--]  openal.dylib
+│   │   ├── [-rw-rw-r--]  SDL.dll
+│   │   ├── [-rw-rw-r--]  SDLJava.dll
+│   │   ├── [-rw-rw-r--]  swt-win32-3235.dll
+│   │   ├── [-rw-rw-r--]  wiiuse.dll
+│   │   ├── [-rw-rw-r--]  WiiUseJ.dll
+│   │   └── [-rw-rw-r--]  wrap_oal.dll
+│   │
+│   └── [drwxrwxr-x]  VocalyzeSIVOX
+│       ├── [drwxrwxr-x]  bin
+│       ├── [drwxrwxr-x]  doc
+│       ├── [drwxrwxr-x]  lib
+│       ├── [-rw-rw-r--]  license.txt
+│       ├── [drwxrwxr-x]  log
+│       ├── [drwxrwxr-x]  ressources
+│       └── [drwxrwxr-x]  src
+│   
+└── [-rwxrwxr-x]  year.txt
+
