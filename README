@@ -58,6 +58,8 @@ Structure des dossiers:
 │       ├── [drwxrwxr-x]  log
 │       ├── [drwxrwxr-x]  ressources
 │       └── [drwxrwxr-x]  src
-│   
-└── [-rwxrwxr-x]  year.txt
+│
+├── [drwxr-xr-x]  resources
+│   │
+│   └─ [-rwxrwxr-x]  year.txt
 
