@@ -1,4 +1,5 @@
 package models;
+
 import java.util.HashMap;
 
 public enum Public {

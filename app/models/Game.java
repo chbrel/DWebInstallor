@@ -11,6 +11,7 @@ public class Game {
     private Public publicStyle;
     private String age;
     private String title;
+    private GameState gamestate;
     private ArrayList<String> authors;
     private ArrayList<String> notes;
     private String gamePlay;
@@ -19,16 +20,16 @@ public class Game {
     private File gameRep;
 
     public Game(int annee, ArrayList<GameCategory> gameCategories,
-            String shortDescription, Public publicStyle, String age, String title,
+            String shortDescription, Public publicStyle, String age, String title, GameState gamestate,
             ArrayList<String> authors, ArrayList<String> notes,
             String gamePlay, String gameRules) {
-    	this(annee, gameCategories, shortDescription, publicStyle, age, title,
+    	this(annee, gameCategories, shortDescription, publicStyle, age, title, gamestate,
                 authors, notes,
                 gamePlay, gameRules, null);
     }
     
     public Game(int annee, ArrayList<GameCategory> gameCategories,
-            String shortDescription, Public publicStyle, String age, String title,
+            String shortDescription, Public publicStyle, String age, String title, GameState gamestate,
             ArrayList<String> authors, ArrayList<String> notes,
             String gamePlay, String gameRules, File gameRep) {
         this.annee = annee;
@@ -37,6 +38,7 @@ public class Game {
         this.publicStyle = publicStyle;
         this.age = age;
         this.title = title;
+        this.gamestate = gamestate;
         this.authors = authors;
         this.notes = notes;
         this.gamePlay = gamePlay;
@@ -102,6 +104,10 @@ public class Game {
     public String getTitle() {
         return title;
     }
+    
+    public GameState getGameState() {
+        return gamestate;
+    }
 
     public ArrayList<String> getAuthors() {
         return authors;
@@ -144,6 +150,8 @@ public class Game {
         string += "Public: " + this.publicStyle + "\n";
 
         string += "Title: " + this.title + "\n";
+        
+        string += "Game State: " + this.gamestate + "\n";
 
         string += "Authors:\n";
         for (String author : this.authors) {

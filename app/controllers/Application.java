@@ -183,8 +183,19 @@ public class Application extends Controller {
 		String html = "";
 
 		int currentYear = 0;
+		
+		ArrayList<Game> yearGames = new ArrayList<Game>();
+		ArrayList<Game> nonValidateGames = new ArrayList<Game>();
+		
+		for(Game g: games) {
+			if(g.getGameState().equals(GameState.MISSING_COMPLETIONS)) {
+				nonValidateGames.add(g);
+			} else {
+				yearGames.add(g);
+			}
+		}
 
-		for (Game g : games) {
+		for (Game g : yearGames) {
 			if (currentYear != g.getAnnee()) {
 				if (currentYear != 0) {
 					html += "</ul></li>";
@@ -208,6 +219,38 @@ public class Application extends Controller {
 		}
 		html += "</ul></li>";
 
+		currentYear = 0;
+		
+		html += "<li class=\"active\">";
+		html += "<a><label class=\"checkbox\"><input type=\"checkbox\" class=\"game\" id=\"game_missing_completions_all\" onchange=\"javascript:selectAll('game_missing_completions')\" /></label>&nbsp;&nbsp; Projets interessants manquant de quelques finitions (bugs existants, manque d'accessibilité...)</a>";
+		html += "<ul>";
+		
+		for (Game g : nonValidateGames) {
+			if (currentYear != g.getAnnee()) {
+				if (currentYear != 0) {
+					html += "</ul></li>";
+				}
+				html += "<li class=\"active\">";
+				html += "<a><label class=\"checkbox\"><input type=\"checkbox\" class=\"game game_missing_completions\" id=\"game_"
+						+ g.getAnnee()
+						+ "_missing_completions_all\" onchange=\"javascript:selectAll('game_"
+						+ g.getAnnee()
+						+ "_missing_completions')\" /></label>&nbsp;&nbsp;"
+						+ g.getAnnee() + "</a>";
+				html += "<ul>";
+				currentYear = g.getAnnee();
+			}
+
+			html += "<li><label class=\"checkbox\">";
+			html += "<input type=\"checkbox\" class=\"game game_missing_completions game_"
+					+ g.getAnnee() + "_missing_completions\" name=\"games\" value=\""
+					+ g.getGameRep() + "\" /> " + g.getTitle();
+			html += "</label></li>";
+		}
+		html += "</ul></li>";
+		
+		html += "</ul></li>";
+		
 		return html;
 	}
 
@@ -215,7 +258,23 @@ public class Application extends Controller {
 			TreeMap<GameCategory, ArrayList<Game>> catGames) {
 		String html = "";
 
+		TreeMap<GameCategory, ArrayList<Game>> okCatGames = new TreeMap<GameCategory, ArrayList<Game>>();
+		TreeMap<GameCategory, ArrayList<Game>> nonValidateGames = new TreeMap<GameCategory, ArrayList<Game>>();
+		
 		for (GameCategory gameCat : catGames.keySet()) {
+			okCatGames.put(gameCat, new ArrayList<Game>());
+			nonValidateGames.put(gameCat, new ArrayList<Game>());
+			
+			for (Game g : catGames.get(gameCat)) {
+				if(g.getGameState().equals(GameState.MISSING_COMPLETIONS)) {
+					nonValidateGames.get(gameCat).add(g);
+				} else {
+					okCatGames.get(gameCat).add(g);
+				}
+			}
+		}
+		
+		for (GameCategory gameCat : okCatGames.keySet()) {
 			String clearCatName = gameCat.toString().toLowerCase()
 					.replaceAll(" ", "");
 			html += "<li class=\"active\">";
@@ -228,7 +287,7 @@ public class Application extends Controller {
 					+ "</a>";
 			html += "<ul>";
 
-			for (Game g : catGames.get(gameCat)) {
+			for (Game g : okCatGames.get(gameCat)) {
 				String clearGameTitle = g.getTitle().toLowerCase()
 						.replaceAll(" ", "");
 				html += "<li><label class=\"checkbox\">";
@@ -242,7 +301,41 @@ public class Application extends Controller {
 
 			html += "</ul></li>";
 		}
+		
+		html += "<li class=\"active\">";
+		html += "<a><label class=\"checkbox\"><input type=\"checkbox\" class=\"game\" id=\"game_missing_completions_all\" onchange=\"javascript:selectAll('game_missing_completions')\" /></label>&nbsp;&nbsp; Projets interessants manquant de quelques finitions (bugs existants, manque d'accessibilité...)</a>";
+		html += "<ul>";
+		
+		for (GameCategory gameCat : nonValidateGames.keySet()) {
+			String clearCatName = gameCat.toString().toLowerCase()
+					.replaceAll(" ", "");
+			html += "<li class=\"active\">";
+			html += "<a><label class=\"checkbox\"><input type=\"checkbox\" class=\"game game_missing_completions\" id=\"game_"
+					+ clearCatName
+					+ "_missing_completions_all\" onchange=\"javascript:selectAll('game_"
+					+ clearCatName
+					+ "_missing_completions')\" /></label>&nbsp;&nbsp;"
+					+ gameCat
+					+ "</a>";
+			html += "<ul>";
 
+			for (Game g : nonValidateGames.get(gameCat)) {
+				String clearGameTitle = g.getTitle().toLowerCase()
+						.replaceAll(" ", "");
+				html += "<li><label class=\"checkbox\">";
+				html += "<input type=\"checkbox\" class=\"game game_missing_completions game_"
+						+ clearCatName + "_missing_completions game_" + clearGameTitle
+						+ "\" onchange=\"javascript:selectGame(this, 'game_"
+						+ clearGameTitle + "')\" name=\"games\" value=\""
+						+ g.getGameRep() + "\" /> " + g.getTitle();
+				html += "</label></li>";
+			}
+
+			html += "</ul></li>";
+		}
+
+		html += "</ul></li>";
+		
 		return html;
 	}
 

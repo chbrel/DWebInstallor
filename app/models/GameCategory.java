@@ -1,5 +1,6 @@
 package models;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 
 public enum GameCategory {
@@ -8,15 +9,17 @@ public enum GameCategory {
     STRATEGIE("Stratégie"), ATELIER("Atelier DeViNT"),
     ARCADE("Arcade"), REFLEXE("Réflexe"),
     CONDUITE("Conduite"), DESSIN("Dessin"),
-    CONNAISSANCES("Connaissances"), LETTRES("Lettres"),
+    CONNAISSANCES("Connaissances"),
     MEMOIRE("Mémoire"), MUSIQUE("Musique"),
     RAPIDITE("Rapidité"), MOUVEMENT("Mouvement"),
-    CALCUL("calcul");
+    LETTRES("Lettres"), CALCUL("Calcul"),
+    LOGIQUE("Logique"), TEXTUEL("Jeu textuel"),
+    PUZZLE("Puzzle");
     
     // The categorie string.
     private String categorie;
     
-    public static final HashMap<String, GameCategory> validCategory = createValidCategorie();
+    public static final TreeMap<String, GameCategory> validCategory = createValidCategorie();
     
     /**
      * Initialise with the corresponding categorie.
@@ -27,12 +30,15 @@ public enum GameCategory {
         this.categorie = categorie;
     }
     
-    private static HashMap<String, GameCategory> createValidCategorie() {
-        HashMap<String, GameCategory> map = new HashMap<String, GameCategory>();
+    private static TreeMap<String, GameCategory> createValidCategorie() {
+        TreeMap<String, GameCategory> tm = new TreeMap<String, GameCategory>();
         for(GameCategory categorie : GameCategory.values()) {
-            map.put(categorie.toString(), categorie);
+            tm.put(categorie.toString(), categorie);
         }
-        return map;
+        
+        //HashMap<String, GameCategory> hm = new HashMap<String, GameCategory>(tm);
+        
+        return tm;
     }
 
     /**

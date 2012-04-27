@@ -53,6 +53,15 @@ public class Parsor {
             
             String title = xmlRoot.getChildText("title");
             
+            GameState gamestate = null;
+            String gamestateString = xmlRoot.getChildText("gamestate");
+            if (GameState.validGameState.containsKey(gamestateString)) {
+            	gamestate = GameState.validGameState.get(gamestateString);
+            } else {
+                // TODO Throw an exception.
+                return null;
+            }
+            
             ArrayList<String> authors = new ArrayList<String>();
             for (Object obj : xmlRoot.getChild("authors").getChildren("author")) {
                 authors.add(((Element) obj).getText());
@@ -67,7 +76,7 @@ public class Parsor {
 
             String gamerules = xmlRoot.getChildText("gamerules");
 
-            return new Game(annee, categories, shortDescription, dpublic, age, title,
+            return new Game(annee, categories, shortDescription, dpublic, age, title, gamestate,
                     authors, notes, gameplay, gamerules);
 
         } catch (JDOMException e) {
