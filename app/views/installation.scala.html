@@ -2,19 +2,32 @@
 
 @main(title, year) {
 			<script type="text/javascript">
+			var increment = 10;
+			var percent = 0;
 			  var cometMessage = function(event) {
-			    if(event.indexOf("info: ",0) != -1) {
-			    	var info = event.substring(6,event.length);
-			    	$('#installInfo').append('' + info + '<br/>');
-			    } else {
-			    	if(event.indexOf("success: ",0) != -1) {
-			    		var success = event.substring(9,event.length);
-			    		$('#installSucess').show();
-			    		$('#installSucess').append('' + success + '<br/>');
-			    	} else {
-			    		$('#installationLog').append('' + event + '<br/>');
-			    	}
-			    }
+				  if(event.indexOf("size: ",0) != -1) {
+				  		var size = event.substring(6,event.length);
+					    increment = 100 / size;
+				  } else {
+					    if(event.indexOf("info: ",0) != -1) {
+					    	var info = event.substring(6,event.length);
+					    	$('#installInfo').append('' + info + '<br/>');
+					    	percent += increment;
+					    	if(percent > 100) {
+					    		percent = 100;
+					    	}
+					    	$('#installProgessBar').attr("style", "width: " + percent + "%");
+					    } else {
+					    	if(event.indexOf("success: ",0) != -1) {
+					    		var success = event.substring(9,event.length);
+					    		$('#installProgessBarContainer').hide();
+					    		$('#installSucess').show();
+					    		$('#installSucess').append('' + success + '<br/>');
+					    	} else {
+					    		$('#installationLog').append('' + event + '<br/>');
+					    	}
+					    }
+				  }
 			  }
 			</script>
 			
@@ -25,6 +38,9 @@
 					<div class="hero-unit">
 						<h2>@title</h2>
 						<div id="installationLog">
+							<div class="progress progress-success progress-striped active" style="margin-bottom: 9px;" id="installProgessBarContainer">
+								<div class="bar" id="installProgessBar" style="width: 0%"></div>
+							</div>
 							<div class="alert alert-info" id="installInfo">
 							</div>
 							

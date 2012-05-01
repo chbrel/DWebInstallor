@@ -31,9 +31,9 @@ import models.*;
 
 public class Application extends Controller {
 
-	public static final String CD_CONTENT_PATH = "." + File.separator
-			+ "resources" + File.separator + "CDContenu";
-	// public static final String CD_CONTENT_PATH = ".";
+	//public static final String CD_CONTENT_PATH = "." + File.separator
+	// 		+ "resources" + File.separator + "CDContenu";
+	public static final String CD_CONTENT_PATH = ".";
 	public static final String YEAR_FILE_PATH = "." + File.separator
 			+ "resources" + File.separator + "year.txt";
 	public static final String GAMES_PATH = CD_CONTENT_PATH + File.separator
@@ -205,9 +205,9 @@ public class Application extends Controller {
 						+ g.getAnnee()
 						+ "_all\" onchange=\"javascript:selectAll('game_"
 						+ g.getAnnee()
-						+ "')\" /></label>&nbsp;&nbsp;"
+						+ "')\" /></label>&nbsp;&nbsp;**&nbsp;"
 						+ g.getAnnee() + "</a>";
-				html += "<ul>";
+				html += "<ul class=\"nav nav-pills nav-stacked\">";
 				currentYear = g.getAnnee();
 			}
 
@@ -223,7 +223,7 @@ public class Application extends Controller {
 		
 		html += "<li class=\"active\">";
 		html += "<a><label class=\"checkbox\"><input type=\"checkbox\" class=\"game\" id=\"game_missing_completions_all\" onchange=\"javascript:selectAll('game_missing_completions')\" /></label>&nbsp;&nbsp; Projets interessants manquant de quelques finitions (bugs existants, manque d'accessibilité...)</a>";
-		html += "<ul>";
+		html += "<ul class=\"nav nav-pills nav-stacked\">";
 		
 		for (Game g : nonValidateGames) {
 			if (currentYear != g.getAnnee()) {
@@ -235,9 +235,9 @@ public class Application extends Controller {
 						+ g.getAnnee()
 						+ "_missing_completions_all\" onchange=\"javascript:selectAll('game_"
 						+ g.getAnnee()
-						+ "_missing_completions')\" /></label>&nbsp;&nbsp;"
+						+ "_missing_completions')\" /></label>&nbsp;&nbsp;**&nbsp;"
 						+ g.getAnnee() + "</a>";
-				html += "<ul>";
+				html += "<ul class=\"nav nav-pills nav-stacked\">";
 				currentYear = g.getAnnee();
 			}
 
@@ -275,63 +275,67 @@ public class Application extends Controller {
 		}
 		
 		for (GameCategory gameCat : okCatGames.keySet()) {
-			String clearCatName = gameCat.toString().toLowerCase()
-					.replaceAll(" ", "");
-			html += "<li class=\"active\">";
-			html += "<a><label class=\"checkbox\"><input type=\"checkbox\" class=\"game\" id=\"game_"
-					+ clearCatName
-					+ "_all\" onchange=\"javascript:selectAll('game_"
-					+ clearCatName
-					+ "')\" /></label>&nbsp;&nbsp;"
-					+ gameCat
-					+ "</a>";
-			html += "<ul>";
-
-			for (Game g : okCatGames.get(gameCat)) {
-				String clearGameTitle = g.getTitle().toLowerCase()
+			if(! okCatGames.get(gameCat).isEmpty()) {
+				String clearCatName = gameCat.toString().toLowerCase()
 						.replaceAll(" ", "");
-				html += "<li><label class=\"checkbox\">";
-				html += "<input type=\"checkbox\" class=\"game game_"
-						+ clearCatName + " game_" + clearGameTitle
-						+ "\" onchange=\"javascript:selectGame(this, 'game_"
-						+ clearGameTitle + "')\" name=\"games\" value=\""
-						+ g.getGameRep() + "\" /> " + g.getTitle();
-				html += "</label></li>";
+				html += "<li class=\"active\">";
+				html += "<a><label class=\"checkbox\"><input type=\"checkbox\" class=\"game\" id=\"game_"
+						+ clearCatName
+						+ "_all\" onchange=\"javascript:selectAll('game_"
+						+ clearCatName
+						+ "')\" /></label>&nbsp;&nbsp;**&nbsp;"
+						+ gameCat
+						+ "</a>";
+				html += "<ul class=\"nav nav-pills nav-stacked\">";
+	
+				for (Game g : okCatGames.get(gameCat)) {
+					String clearGameTitle = g.getTitle().toLowerCase()
+							.replaceAll(" ", "");
+					html += "<li><label class=\"checkbox\">";
+					html += "<input type=\"checkbox\" class=\"game game_"
+							+ clearCatName + " game_" + clearGameTitle
+							+ "\" onchange=\"javascript:selectGame(this, 'game_"
+							+ clearGameTitle + "')\" name=\"games\" value=\""
+							+ g.getGameRep() + "\" /> " + g.getTitle();
+					html += "</label></li>";
+				}
+	
+				html += "</ul></li>";
 			}
-
-			html += "</ul></li>";
 		}
 		
 		html += "<li class=\"active\">";
 		html += "<a><label class=\"checkbox\"><input type=\"checkbox\" class=\"game\" id=\"game_missing_completions_all\" onchange=\"javascript:selectAll('game_missing_completions')\" /></label>&nbsp;&nbsp; Projets interessants manquant de quelques finitions (bugs existants, manque d'accessibilité...)</a>";
-		html += "<ul>";
+		html += "<ul class=\"nav nav-pills nav-stacked\">";
 		
 		for (GameCategory gameCat : nonValidateGames.keySet()) {
-			String clearCatName = gameCat.toString().toLowerCase()
-					.replaceAll(" ", "");
-			html += "<li class=\"active\">";
-			html += "<a><label class=\"checkbox\"><input type=\"checkbox\" class=\"game game_missing_completions\" id=\"game_"
-					+ clearCatName
-					+ "_missing_completions_all\" onchange=\"javascript:selectAll('game_"
-					+ clearCatName
-					+ "_missing_completions')\" /></label>&nbsp;&nbsp;"
-					+ gameCat
-					+ "</a>";
-			html += "<ul>";
-
-			for (Game g : nonValidateGames.get(gameCat)) {
-				String clearGameTitle = g.getTitle().toLowerCase()
+			if(! nonValidateGames.get(gameCat).isEmpty()) {
+				String clearCatName = gameCat.toString().toLowerCase()
 						.replaceAll(" ", "");
-				html += "<li><label class=\"checkbox\">";
-				html += "<input type=\"checkbox\" class=\"game game_missing_completions game_"
-						+ clearCatName + "_missing_completions game_" + clearGameTitle
-						+ "\" onchange=\"javascript:selectGame(this, 'game_"
-						+ clearGameTitle + "')\" name=\"games\" value=\""
-						+ g.getGameRep() + "\" /> " + g.getTitle();
-				html += "</label></li>";
+				html += "<li class=\"active\">";
+				html += "<a><label class=\"checkbox\"><input type=\"checkbox\" class=\"game game_missing_completions\" id=\"game_"
+						+ clearCatName
+						+ "_missing_completions_all\" onchange=\"javascript:selectAll('game_"
+						+ clearCatName
+						+ "_missing_completions')\" /></label>&nbsp;&nbsp;**&nbsp;"
+						+ gameCat
+						+ "</a>";
+				html += "<ul class=\"nav nav-pills nav-stacked\">";
+	
+				for (Game g : nonValidateGames.get(gameCat)) {
+					String clearGameTitle = g.getTitle().toLowerCase()
+							.replaceAll(" ", "");
+					html += "<li><label class=\"checkbox\">";
+					html += "<input type=\"checkbox\" class=\"game game_missing_completions game_"
+							+ clearCatName + "_missing_completions game_" + clearGameTitle
+							+ "\" onchange=\"javascript:selectGame(this, 'game_"
+							+ clearGameTitle + "')\" name=\"games\" value=\""
+							+ g.getGameRep() + "\" /> " + g.getTitle();
+					html += "</label></li>";
+				}
+	
+				html += "</ul></li>";
 			}
-
-			html += "</ul></li>";
 		}
 
 		html += "</ul></li>";
@@ -400,6 +404,11 @@ public class Application extends Controller {
 					break;
 				}
 			}
+		}
+		
+		if (toInstall.size() != 0) {
+			int totSize = toInstall.size() + 4;
+			comet.sendMessage("size: " + totSize);
 		}
 
 		if (toInstall.size() != 0) {
@@ -874,6 +883,14 @@ public class Application extends Controller {
 
 		boolean uninstallAll = (toUninstall.size() == installedGames.size());
 
+		if (toUninstall.size() != 0) {
+			int totSize = toUninstall.size();
+			if(uninstallAll) {
+				totSize += 4;
+			}
+			comet.sendMessage("size: " + totSize);
+		}
+		
 		for (Game game : installedGames) {
 			if ((toUninstall.contains(game)) && game != null) {
 				comet.sendMessage("info: Désinstallation de " + game.getTitle());

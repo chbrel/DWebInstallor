@@ -8,6 +8,7 @@
 					} else {
 						$('.' + className).attr('checked', false);
 					}
+					$('.' + className).trigger('onchange');
 				}
 				
 				function selectGame(input, className) {
