@@ -1,4 +1,4 @@
-Structure des dossiers:
+Structure des dossiers (sans zip):
 
 .
 ├── [drwxr-xr-x]  CDContenu
@@ -62,4 +62,31 @@ Structure des dossiers:
 ├── [drwxr-xr-x]  resources
 │   │
 │   └─ [-rwxrwxr-x]  year.txt
+
+
+Structure des dossiers (avec zip!):
+
+.
+├── [drwxr-xr-x]  CDContenu
+│   │
+│   ├── [drwxrwxr-x]  DHelp.zip
+│   │
+│   ├── [drwxrwxr-x]  DListor.zip
+│   │
+│   ├── [drwxrwxr-x]  jre
+│   │
+│   ├── [drwxrwxr-x]  LesLogiciels
+│   │   ├── [drwxrwxr-x]  Prisma
+│   │   │	├── [-rwxrwxr-x]  Prisma.zip
+│   │   │	├── [drwxrwxr-x]  doc
+│   │   │		├── [-rwxrwxr-x]  infos.xml
+│   │
+│   ├── [drwxrwxr-x]  lib (avec les sous-zip)
+│   │
+│   └── [drwxrwxr-x]  VocalyzeSIVOX.zip
+│
+├── [drwxr-xr-x]  resources
+│   │
+│   └─ [-rwxrwxr-x]  year.txt
+
 

@@ -477,9 +477,9 @@ public class Application extends Controller {
 				if (OSValidator.isWindows()) {
 					try {
 						comet.sendMessage("info: Copie du répertoire \"lib\" et de ses sous-répertoires");
-						FileUtils.copy(new File(CD_CONTENT_PATH
+						FileUtils.unzip(new File(CD_CONTENT_PATH
 								+ File.separator + "lib" + File.separator
-								+ "win"), new File(installationFolder
+								+ "win.zip"), new File(installationFolder
 								+ File.separator + "lib" + File.separator));
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -488,9 +488,9 @@ public class Application extends Controller {
 				} else if (OSValidator.isUnix()) {
 					try {
 						comet.sendMessage("info: Copie du répertoire \"lib\" et de ses sous-répertoires");
-						FileUtils.copy(new File(CD_CONTENT_PATH
+						FileUtils.unzip(new File(CD_CONTENT_PATH
 								+ File.separator + "lib" + File.separator
-								+ "linux"), new File(installationFolder
+								+ "linux.zip"), new File(installationFolder
 								+ File.separator + "lib" + File.separator));
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -499,9 +499,9 @@ public class Application extends Controller {
 				} else if (OSValidator.isMac()) {
 					try {
 						comet.sendMessage("info: Copie du répertoire \"lib\" et de ses sous-répertoires");
-						FileUtils.copy(new File(CD_CONTENT_PATH
+						FileUtils.unzip(new File(CD_CONTENT_PATH
 								+ File.separator + "lib" + File.separator
-								+ "mac"), new File(installationFolder
+								+ "mac.zip"), new File(installationFolder
 								+ File.separator + "lib" + File.separator));
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -515,8 +515,8 @@ public class Application extends Controller {
 					+ File.separator).exists()) {
 				try {
 					comet.sendMessage("info: Copie du répertoire \"DListor\" et de ses sous-répertoires");
-					FileUtils.copy(new File(CD_CONTENT_PATH + File.separator
-							+ "DListor" + File.separator), new File(
+					FileUtils.unzip(new File(CD_CONTENT_PATH + File.separator
+							+ "DListor.zip"), new File(
 							installationFolder + File.separator + "DListor"
 									+ File.separator));
 				} catch (IOException e) {
@@ -534,8 +534,8 @@ public class Application extends Controller {
 					// + "LesLogiciels" + File.separator + "VocalyzeSIVOX" +
 					// File.separator), new File(installationFolder +
 					// File.separator + "VocalyzeSIVOX" + File.separator));
-					FileUtils.copy(new File(CD_CONTENT_PATH + File.separator
-							+ "VocalyzeSIVOX" + File.separator), new File(
+					FileUtils.unzip(new File(CD_CONTENT_PATH + File.separator
+							+ "VocalyzeSIVOX.zip"), new File(
 							installationFolder + File.separator
 									+ "VocalyzeSIVOX" + File.separator));
 				} catch (IOException e) {
@@ -550,7 +550,7 @@ public class Application extends Controller {
 					comet.sendMessage("info: Copie du projet \"" + g.getTitle()
 							+ "\" (répertoire \"" + g.getGameRep().getName()
 							+ "\" et ses sous-répertoires)");
-					FileUtils.copy(g.getGameRep(), new File(installationFolder
+					FileUtils.unzip(new File(g.getGameRep().getAbsoluteFile() + File.separator + g.getGameRep().getName() + ".zip"), new File(installationFolder
 							+ File.separator + g.getGameRep().getName()
 							+ File.separator));
 				} catch (IOException e) {
@@ -571,8 +571,8 @@ public class Application extends Controller {
 					+ File.separator).exists()) {
 				try {
 					comet.sendMessage("info: Copie des fichiers de base de l'aide");
-					FileUtils.copy(new File(CD_CONTENT_PATH + File.separator
-							+ "DHelp" + File.separator), new File(
+					FileUtils.unzip(new File(CD_CONTENT_PATH + File.separator
+							+ "DHelp.zip"), new File(
 							installationFolder + File.separator + "Aide"
 									+ File.separator));
 				} catch (IOException e) {

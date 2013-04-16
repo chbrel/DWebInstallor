@@ -11,6 +11,8 @@
 package models;
 
 import java.io.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * 
@@ -99,5 +101,28 @@ public class FileUtils {
 			}
 		}
 		dir.delete();
+	}
+	
+	public static void unzip(File from, File to) throws IOException {
+		if (! to.exists()) {
+			to.mkdir();
+		}
+		
+		ZipInputStream zis = new ZipInputStream(new FileInputStream(from));
+		byte[] buffer = new byte[1024];
+		ZipEntry ze;
+		while((ze = zis.getNextEntry()) != null) {
+			File zeFile = new File(to.getAbsoluteFile() + File.separator + ze.getName());
+			zeFile.getParentFile().mkdirs();
+			zeFile.createNewFile();
+			
+			FileOutputStream fos = new FileOutputStream(zeFile);
+			int numBytes;
+			while((numBytes = zis.read(buffer, 0, buffer.length)) != -1) {
+				fos.write(buffer, 0, numBytes);
+			}
+			zis.closeEntry();
+		}
+		zis.close();
 	}
 }
