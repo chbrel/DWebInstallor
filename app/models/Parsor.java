@@ -4,6 +4,9 @@ import models.Game;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+
+import play.Logger;
+
 import java.io.*;
 import java.util.ArrayList;
 
@@ -23,6 +26,8 @@ public class Parsor {
             File f = new File(fileName);
             Element xmlRoot = builder.build(f).getRootElement();
 
+            String title = xmlRoot.getChildText("title");
+            
             int annee = Integer.decode(xmlRoot.getChildText("year"));
 
             ArrayList<GameCategory> categories = new ArrayList<GameCategory>();
@@ -33,7 +38,7 @@ public class Parsor {
                     categories.add(GameCategory.validCategory.get(category
                             .getText()));
                 } else {
-                    // TODO Throw an Exception.
+                	Logger.info(title +":\n Invalid category\n");
                     return null;
                 }
             }
@@ -45,20 +50,18 @@ public class Parsor {
             if (Public.validPublic.containsKey(publicString)) {
                 dpublic = Public.validPublic.get(publicString);
             } else {
-                // TODO Throw an exception.
+            	Logger.info(title +":\nInvalid public\n");
                 return null;
             }
 
             String age = xmlRoot.getChildText("age");
-            
-            String title = xmlRoot.getChildText("title");
-            
+                        
             GameState gamestate = null;
             String gamestateString = xmlRoot.getChildText("gamestate");
             if (GameState.validGameState.containsKey(gamestateString)) {
             	gamestate = GameState.validGameState.get(gamestateString);
             } else {
-                // TODO Throw an exception.
+            	Logger.info(title +":\nInvalid game state\n");
                 return null;
             }
             
@@ -80,8 +83,12 @@ public class Parsor {
                     authors, notes, gameplay, gamerules);
 
         } catch (JDOMException e) {
+        	Logger.info(fileName + ":\nJDOM exception:\n");
+        	Logger.info(e.getMessage());
             return null;
         } catch (IOException e) {
+        	Logger.info(fileName + ":\nIO exception:\n");
+        	Logger.info(e.getMessage());
             return null;
         }
     }

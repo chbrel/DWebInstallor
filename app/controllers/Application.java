@@ -1,6 +1,5 @@
 package controllers;
 
-import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,27 +9,29 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import models.FileUtils;
+import models.Game;
+import models.GameCategory;
+import models.GameState;
+import models.HelpUtils;
+import models.OSValidator;
+import models.Shortcut;
+import models.YearGameSortComparator;
 import play.*;
 import play.libs.Comet;
 import play.mvc.*;
-import play.mvc.Http.*;
-import scala.actors.threadpool.Arrays;
+import play.mvc.Http.RequestBody;
 
 import views.html.*;
 
-import models.*;
-
 public class Application extends Controller {
-
+  
 	//public static final String CD_CONTENT_PATH = "." + File.separator
 	// 		+ "resources" + File.separator + "CDContenu";
 	public static final String CD_CONTENT_PATH = ".";
@@ -1054,4 +1055,5 @@ public class Application extends Controller {
 			System.exit(0);
 		}
 	}
+  
 }
