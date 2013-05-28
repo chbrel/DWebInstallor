@@ -694,7 +694,13 @@ public class Application extends Controller {
 		jeuxContent += HelpUtils.FOOTER;
 		FileUtils.write(installationFolder + File.separator + "Aide"
 				+ File.separator + "jeux.html", jeuxContent);
-
+		
+		File jeuxDir = new File(installationFolder + File.separator + "Aide" + File.separator + "jeux");
+		
+		if(! jeuxDir.exists()) {
+			jeuxDir.mkdir();
+		}
+		
 		// Création de tous les fichiers aides des jeux installés
 		for (Game g : toInstall) {
 			comet.sendMessage("info: Génération de l'aide pour le jeu \""
