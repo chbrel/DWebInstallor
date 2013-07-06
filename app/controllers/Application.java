@@ -107,11 +107,12 @@ public class Application extends Controller {
 		session("uninstall", uninstall.equals("uninstall") + "");
 
 		String defaultInstallFolder = "";
-
+		
 		if (OSValidator.isWindows()) {
 			defaultInstallFolder = "C:" + File.separator + "Program Files"
 					+ File.separator + "DeViNT" + File.separator;
-			if (OSValidator.isWindowsSeven()) {
+			
+			if (OSValidator.isWindowsSeven() || OSValidator.isWindowsEight() || OSValidator.isWindowsNT()) {
 				defaultInstallFolder = System.getProperty("user.home")
 						+ File.separator + "DeViNT" + File.separator;
 			}
@@ -586,7 +587,7 @@ public class Application extends Controller {
 			String gameShortcutPath = "";
 			String helpShortcutPath = "";
 
-			if (OSValidator.isWindowsSeven()) {
+			if (OSValidator.isWindowsSeven() || OSValidator.isWindowsEight() || OSValidator.isWindowsNT()) {
 				gameShortcutPath = System.getProperty("user.home")
 						+ File.separator + "Desktop" + File.separator
 						+ "Jeux DeViNT.lnk";
@@ -943,7 +944,7 @@ public class Application extends Controller {
 			String gameShortcutPath = "";
 			String helpShortcutPath = "";
 
-			if (OSValidator.isWindowsSeven()) {
+			if (OSValidator.isWindowsSeven() || OSValidator.isWindowsEight() || OSValidator.isWindowsNT()) {
 				gameShortcutPath = System.getProperty("user.home")
 						+ File.separator + "Desktop" + File.separator
 						+ "Jeux DeViNT.lnk";

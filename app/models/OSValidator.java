@@ -40,8 +40,24 @@ public class OSValidator{
 	public static boolean isWindowsSeven(){
 		 
 		String os = System.getProperty("os.name").toLowerCase();
-		//windows seven
+		//windows 7
 	    return (os.indexOf( "win" ) >= 0) && (os.indexOf( "7" ) >= 0); 
+ 
+	}
+	
+	public static boolean isWindowsEight(){
+		 
+		String os = System.getProperty("os.name").toLowerCase();
+		//windows 8
+	    return (os.indexOf( "win" ) >= 0) && (os.indexOf( "8" ) >= 0); 
+ 
+	}
+	
+	public static boolean isWindowsNT(){
+		 
+		String os = System.getProperty("os.name").toLowerCase();
+		//windows NT (unknown)
+	    return (os.indexOf( "win" ) >= 0) && (os.indexOf( "nt" ) >= 0); 
  
 	}
  
