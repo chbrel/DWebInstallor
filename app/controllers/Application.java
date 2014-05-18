@@ -622,7 +622,7 @@ public class Application extends Controller {
 									+ "execution.bat"));
 					Shortcut scutAide = new Shortcut(new File(
 							installationFolder + File.separator + "Aide"
-									+ File.separator + "index.html"));
+									+ File.separator + "jeux.html"));
 					OutputStream osJeux = new FileOutputStream(gameShortcutPath);
 					OutputStream osAide = new FileOutputStream(helpShortcutPath);
 					osJeux.write(scutJeux.getBytes());
