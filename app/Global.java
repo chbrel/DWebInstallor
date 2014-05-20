@@ -4,13 +4,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.lang.Process;
 
+import controllers.Application;
+
 import models.OSValidator;
 
 import play.*;
 
 public class Global extends GlobalSettings {
 	
-	public static Process BROWSER = null;
+	
 
 	class StartThread extends Thread {
 		StartThread() {
@@ -31,7 +33,7 @@ public class Global extends GlobalSettings {
 	    	
 	    	try {
 	    		if(OSValidator.isWindows()) {
-	    			Global.BROWSER = Runtime.getRuntime().exec("cmd.exe /c .\\chrome\\chrome.exe --user-data-dir=C:\\temp\\ \"http://127.0.0.1:9000/\"" );
+	    			Application.BROWSER = Runtime.getRuntime().exec("cmd.exe /c .\\chrome\\chrome.exe --user-data-dir=C:\\temp\\ \"http://127.0.0.1:9000/\"" );
 	    		} else {
 	    			Desktop.getDesktop().browse(new URI("http://127.0.0.1:9000"));
 	    		}

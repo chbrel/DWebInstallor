@@ -1,7 +1,5 @@
 package controllers;
 
-import Global;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,6 +31,8 @@ import play.mvc.Http.RequestBody;
 import views.html.*;
 
 public class Application extends Controller {
+	
+	public static Process BROWSER = null;
   
 	//public static final String CD_CONTENT_PATH = "." + File.separator
 	// 		+ "resources" + File.separator + "CDContenu";
@@ -1061,7 +1061,7 @@ public class Application extends Controller {
 
 			Logger.info("Close application...");
 			
-			Global.BROWSER.destroy();
+			Application.BROWSER.destroy();
 
 			System.exit(0);
 		}
