@@ -713,6 +713,21 @@ public class Application extends Controller {
 			gameContent += "	<div class=\"jeu_title\">\n";
 			gameContent += "<h1>" + g.getTitle() + "</h1>\n";
 			gameContent += "	</div>\n";
+			
+			gameContent += "	<div class=\"jeu_notes boite\">\n";
+			gameContent += "		<div class=\"boite_title\">\n";
+			gameContent += "		Notes sur le jeu\n";
+			gameContent += "		</div>\n";
+			gameContent += "		<div class=\"boite_content\">\n";
+			gameContent += "			<ul>\n";
+			for (String note : g.getNotes()) {
+				gameContent += "		<li class=\"jeu_note\">\n";
+				gameContent += note + "\n";
+				gameContent += "		</li>\n";
+			}
+			gameContent += "			</ul>\n";
+			gameContent += "		</div>\n";
+			gameContent += "	</div>\n";
 
 			gameContent += "	<div class=\"jeu_authors boite\">\n";
 			gameContent += "		<div class=\"boite_title\">\n";
@@ -776,21 +791,6 @@ public class Application extends Controller {
 			gameContent += "		</div>\n";
 			gameContent += "		<div class=\"boite_content\">\n";
 			gameContent += g.getGamePlay() + "\n";
-			gameContent += "		</div>\n";
-			gameContent += "	</div>\n";
-
-			gameContent += "	<div class=\"jeu_notes boite\">\n";
-			gameContent += "		<div class=\"boite_title\">\n";
-			gameContent += "		Notes sur le jeu\n";
-			gameContent += "		</div>\n";
-			gameContent += "		<div class=\"boite_content\">\n";
-			gameContent += "			<ul>\n";
-			for (String note : g.getNotes()) {
-				gameContent += "		<li class=\"jeu_note\">\n";
-				gameContent += note + "\n";
-				gameContent += "		</li>\n";
-			}
-			gameContent += "			</ul>\n";
 			gameContent += "		</div>\n";
 			gameContent += "	</div>\n";
 
