@@ -38,7 +38,11 @@
     <script>
     function after_close() {
 	  if (window.closed) {
-	    $.get("@routes.Application.exit", function(data) {});
+	    $.ajax({
+	    	url: "@routes.Application.exit",
+	    	async: false,
+	    	success: function(data) {}
+	    });
 	  }
 	}
     </script>
