@@ -1,5 +1,7 @@
 package controllers;
 
+import Global;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -1058,6 +1060,8 @@ public class Application extends Controller {
 			}
 
 			Logger.info("Close application...");
+			
+			Global.BROWSER.destroy();
 
 			System.exit(0);
 		}
