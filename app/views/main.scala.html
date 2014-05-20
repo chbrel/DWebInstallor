@@ -36,19 +36,30 @@
     <link rel="apple-touch-icon" sizes="114x114" type="image/png" href="@routes.Assets.at("images/apple-touch-icon-114x114.png")">
     
     <script>
+    
+    $(document).ready(function() {
+        var inFormOrLink;
+        $('a').live('click', function() { inFormOrLink = true; });
+        $('form').bind('submit', function() { inFormOrLink = true; });
+        
+        $(window).bind("beforeunload", function() {
+            if (!inFormOrLink) {
+                after_close();
+            } 
+             
+        })
+    });
     function after_close() {
-	  if (window.closed) {
-	    $.ajax({
-	    	url: "@routes.Application.exit",
-	    	async: false,
-	    	success: function(data) {}
-	    });
-	  }
+        $.ajax({
+        	url: "@routes.Application.exit",
+        	async: false,
+        	success: function(data) {}
+        });
 	}
     </script>
   </head>
 
-  <body onbeforeunload="after_close();">
+  <body>
 
 	<!-- Navigation Bar -->
     <div class="navbar navbar-fixed-top">
