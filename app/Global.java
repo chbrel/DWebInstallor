@@ -52,7 +52,7 @@ public class Global extends GlobalSettings {
 				if (OSValidator.isWindows()) {
 					controllers.Application.BROWSER = Runtime
 							.getRuntime()
-							.exec("cmd.exe /c .\\chrome\\chrome.exe " + options + " --user-data-dir=C:\\temp\\ \"http://127.0.0.1:9000/\"");
+							.exec(".\\chrome\\chrome.exe " + options + " --user-data-dir=C:\\temp\\ \"http://127.0.0.1:9000/\"");
 				} else {
 					Desktop.getDesktop().browse(
 							new URI("http://127.0.0.1:9000"));
