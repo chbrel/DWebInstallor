@@ -35,9 +35,16 @@
     <link rel="apple-touch-icon" sizes="72x72" type="image/png" href="@routes.Assets.at("images/apple-touch-icon-72x72.png")">
     <link rel="apple-touch-icon" sizes="114x114" type="image/png" href="@routes.Assets.at("images/apple-touch-icon-114x114.png")">
     
+    <script>
+    function after_close() {
+	  if (window.closed) {
+	    $.get("@routes.Application.exit", function(data) {});
+	  }
+	}
+    </script>
   </head>
 
-  <body>
+  <body onbeforeunload="after_close();">
 
 	<!-- Navigation Bar -->
     <div class="navbar navbar-fixed-top">
