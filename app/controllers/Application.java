@@ -377,17 +377,42 @@ public class Application extends Controller {
 		if (session("uninstall") != null && session("uninstall").equals("true")) {
 			Comet comet = new Comet("parent.cometMessage") {
 				public void onConnected() {
-					launchUninstall(this, installationFolder, selectedGames);
+					CometThread ct = new CometThread(this, installationFolder, selectedGames, true);
+					ct.start();
 				}
 			};
 			return ok(comet);
 		} else {
 			Comet comet = new Comet("parent.cometMessage") {
 				public void onConnected() {
-					launchCopy(this, installationFolder, selectedGames);
+					CometThread ct = new CometThread(this, installationFolder, selectedGames, false);
+					ct.start();
 				}
 			};
 			return ok(comet);
+		}
+	}
+	
+	public static class CometThread extends Thread {
+		private Comet comet;
+		private String installationFolder;
+		private String[] selectedGames;
+		private boolean uninstallMode;
+		
+		public CometThread(Comet comet, String installationFolder, String[] selectedGames, boolean uninstallMode) {
+			super();
+			this.comet = comet;
+			this.installationFolder = installationFolder;
+			this.selectedGames = selectedGames;
+			this.uninstallMode = uninstallMode;
+		}
+		
+		public void run() {
+			if(uninstallMode) {
+				Application.launchUninstall(this.comet, this.installationFolder, this.selectedGames);
+			} else {
+				Application.launchCopy(this.comet, this.installationFolder, this.selectedGames);
+			}
 		}
 	}
 
